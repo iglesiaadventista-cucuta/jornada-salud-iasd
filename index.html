@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jornada de Salud — IASD</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{--bg:#f8f6f1;--bg-card:#fff;--bg-surface:#f0ede5;--bg-sidebar:#1a2340;--bg-sidebar-hover:#253058;--accent:#e8973e;--accent-dark:#c77a2a;--accent-light:#fdf0e0;--blue:#3a7bd5;--blue-light:#e8f0fd;--green:#2d9f6f;--green-light:#e4f5ec;--red:#d94343;--red-light:#fde8e8;--purple:#7c5cbf;--purple-light:#f0ebfa;--text:#2c2c2c;--text-dim:#6b6b6b;--text-muted:#9a9a9a;--text-sidebar:#c8cedf;--border:rgba(0,0,0,.08);--radius:10px;--shadow:0 2px 12px rgba(0,0,0,.06);--shadow-lg:0 8px 32px rgba(0,0,0,.1)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes callPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,67,67,.4)}70%{box-shadow:0 0 0 14px rgba(217,67,67,0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes bellShake{0%{transform:rotate(0)}15%{transform:rotate(15deg)}30%{transform:rotate(-10deg)}45%{transform:rotate(8deg)}60%{transform:rotate(-5deg)}75%{transform:rotate(2deg)}100%{transform:rotate(0)}}
+.fade-up{animation:fadeUp .5s ease forwards}
+.app-container{display:flex;height:100vh}
+.sidebar{width:260px;background:var(--bg-sidebar);display:flex;flex-direction:column;flex-shrink:0;z-index:10}
+.sidebar-brand{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px}
+.sidebar-brand img{width:42px;height:42px;object-fit:contain}
+.sidebar-brand .brand-text h1{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--accent)}
+.sidebar-brand .brand-text span{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;display:block;margin-top:2px}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-section{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.25);padding:14px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;cursor:pointer;color:var(--text-sidebar);font-size:13px;transition:all .2s;margin:2px 0}
+.nav-item:hover{background:var(--bg-sidebar-hover);color:#fff}.nav-item.active{background:var(--accent);color:#fff;font-weight:600}
+.nav-item .nav-icon{width:20px;text-align:center;font-size:16px}
+.sidebar-user{padding:16px;border-top:1px solid rgba(255,255,255,.08)}
+.sidebar-user .user-info{display:flex;align-items:center;gap:10px}
+.sidebar-user .user-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px}
+.sidebar-user .user-name{color:#fff;font-size:13px;font-weight:500}
+.sidebar-user .user-role{color:rgba(255,255,255,.4);font-size:11px}
+.sidebar-user .btn-logout{margin-top:10px;width:100%;padding:7px;border:1px solid rgba(255,255,255,.15);border-radius:6px;background:transparent;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;transition:all .2s}
+.sidebar-user .btn-logout:hover{background:rgba(255,255,255,.1);color:#fff}
+.main-content{flex:1;overflow-y:auto;padding:28px 32px}
+.page-header{margin-bottom:24px}.page-header h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:700}.page-header p{color:var(--text-dim);font-size:13px;margin-top:4px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--bg-card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.stat-card .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}.stat-card .stat-value{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-top:4px}
+.card{background:var(--bg-card);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:20px}
+.card-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.form-group{display:flex;flex-direction:column;gap:4px}.form-group label{font-size:12px;font-weight:500;color:var(--text-dim)}
+.form-group input,.form-group select,.form-group textarea{padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:var(--bg);transition:all .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,151,62,.3)}
+.btn-secondary{background:var(--bg-surface);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:#e8e5dd}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#258a5e}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#c13636}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#2f6ac0}
+.btn-sm{padding:6px 12px;font-size:12px}.btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse}
+table th{text-align:left;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);border-bottom:2px solid var(--border);font-weight:600}
+table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}table tr:hover{background:rgba(0,0,0,.015)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-wait{background:var(--accent-light);color:var(--accent-dark)}.badge-active{background:var(--blue-light);color:var(--blue)}
+.badge-done{background:var(--green-light);color:var(--green)}.badge-noshow{background:var(--red-light);color:var(--red)}
+.badge-cita{background:var(--purple-light);color:var(--purple)}.badge-turno{background:var(--blue-light);color:var(--blue)}
+.checkbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.checkbox-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;font-size:13px}
+.checkbox-item:hover{border-color:var(--accent);background:var(--accent-light)}.checkbox-item.checked{border-color:var(--accent);background:var(--accent-light)}
+.checkbox-item input{accent-color:var(--accent)}.checkbox-item .cupos{font-size:11px;color:var(--text-muted);margin-left:auto}
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a2340 0%,#2a3a60 50%,#1a2340 100%);padding:20px}
+.login-card{background:#fff;border-radius:16px;padding:40px;width:380px;box-shadow:var(--shadow-lg);text-align:center}
+.login-card img{width:80px;margin-bottom:12px}.login-card h1{font-family:'Playfair Display',serif;font-size:22px;color:var(--accent);margin-bottom:4px}
+.login-card .subtitle{font-size:12px;color:var(--text-muted);margin-bottom:24px}
+.login-card .form-group{text-align:left;margin-bottom:14px}.login-card .form-group input{width:100%}
+.login-card .btn{width:100%;justify-content:center;padding:12px;font-size:14px}
+.login-error{color:var(--red);font-size:12px;margin-bottom:10px;display:none}
+.route-steps{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.route-step{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.route-step.completed{background:var(--green-light);color:var(--green)}.route-step.current{background:var(--red-light);color:var(--red);font-weight:700}
+.route-step.pending{background:var(--bg-surface);color:var(--text-muted)}.route-arrow{color:var(--text-muted);font-size:10px}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center}
+.modal{background:#fff;border-radius:14px;padding:28px;width:90%;max-width:600px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:16px}
+.tv-screen{min-height:100vh;background:linear-gradient(135deg,#0d1b2a,#1b2838,#0d1b2a);color:#fff;padding:30px 40px;font-family:'DM Sans',sans-serif}
+.tv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;padding-bottom:20px;border-bottom:2px solid rgba(255,255,255,.1)}
+.tv-header .tv-brand{display:flex;align-items:center;gap:16px}.tv-header .tv-brand img{width:60px}
+.tv-header .tv-brand h1{font-family:'Playfair Display',serif;font-size:32px;color:var(--accent)}
+.tv-header .tv-brand p{font-size:14px;color:rgba(255,255,255,.5)}
+.tv-clock{font-family:'JetBrains Mono',monospace;font-size:36px;color:var(--accent)}
+.tv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.tv-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px;transition:all .3s}
+.tv-card.calling{background:rgba(217,67,67,.15);border-color:var(--red);animation:callPulse 2s infinite}
+.tv-card .tv-consult-name{font-size:14px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px}
+.tv-card .tv-turno{font-family:'Playfair Display',serif;font-size:48px;font-weight:800;color:var(--accent);margin:8px 0}
+.tv-card.calling .tv-turno{color:var(--red)}
+.tv-card .tv-patient{font-size:18px;font-weight:500}
+.tv-card .tv-status{font-size:13px;margin-top:8px}.tv-card .tv-status.calling-text{color:var(--red);font-weight:700;font-size:15px;animation:pulse 1s infinite}
+.tv-card .tv-queue{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:rgba(255,255,255,.4)}
+.search-box{display:flex;gap:8px;margin-bottom:16px}
+.search-box input{flex:1;padding:9px 14px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:var(--bg)}
+.search-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.search-box select{padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:var(--bg)}
+.tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--bg-surface);border-radius:8px;padding:4px}
+.tab-btn{padding:8px 16px;border-radius:6px;border:none;background:transparent;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500;color:var(--text-dim);transition:all .2s}
+.tab-btn.active{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.chart-bar-row{display:flex;align-items:center;gap:10px;margin:6px 0}
+.chart-bar-label{font-size:12px;color:var(--text-dim);min-width:120px;text-align:right}
+.chart-bar-track{flex:1;height:24px;background:var(--bg-surface);border-radius:4px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:4px;transition:width .5s ease;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff}
+.chart-bar-value{font-size:12px;font-weight:600;min-width:30px}
+.public-header{background:var(--bg-sidebar);padding:20px 40px;display:flex;align-items:center;gap:16px}
+.public-header img{width:50px}.public-header h1{font-family:'Playfair Display',serif;color:var(--accent);font-size:22px}
+.public-header p{color:rgba(255,255,255,.5);font-size:12px}
+.public-body{max-width:700px;margin:30px auto;padding:0 20px}
+@media(max-width:768px){.sidebar{display:none}.main-content{padding:16px}.form-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}}
+@media print{.sidebar,.btn-group,.nav-item,.sidebar-user{display:none!important}.main-content{padding:0!important}.card{box-shadow:none;border:1px solid #ddd}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const LOGO='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCACGAJYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDvKKKKACiiigAooooAKKKKACiimswRSzHAHJNACFwJVTuQT+VPrPtZjcX7P/CEIA9BWhWVKp7ROS2uXOHI0gooorUgKKKKACiiigAooooAKKKKACiiigAooooAKKKRmCqWYgAdSaABmCqWYgAdSayLy7Nw21ciMHgetF5dm4bauRGOg9antrdbaP7RccEdF9P/AK9ebVquu+SHw9WdkIKkuaW/QfZRmB1RvvupZvYdhV6s2ykae9eVv7v5elaVdWGacPd2MayfNruFFFFdBiFFFFABRRRQAUUUUAFFFFABRRRQAUUUjEKpLHAHJNAAzBVLMQAOpNZF5dm4bauRGOg9aLy7Nw21ciMdB61PbW6W0f2i44I6D0/+vXm1arrvkh8PVnZCCpLmlv0QW1ultH9ouOCOg9P/AK9VZ55LqUcHGcKoonnkupRwcZwqirkccdhD5kmGlPQf0FZaVFyQ0gt2afD70tZMdaoLeVYc5YqWf+lXazdPLy3Ukrc8cn61onODjGe2a78M04XW3Q5aytKz3FoqOGVZQcDDKcMp6g1JW6aaujJprRhRRRTEFFFFABRRRQAUUUUAFFFFABWbqc5yIVPA5b/CtKsy2RZJZbqb7iknn1rlxLbShHr+RvRsm5PoOtrdLeP7RccH+Een/wBeqs88l1KODjOFUUXE73UwwDjOFUVcjjjsIvMk+aU9AP5CuLSa5IaQW7On4felrJhHHHYReZL80p6D+gqkTLdz+rHoOwFBMt3P/eY9B2ArVtrZbdMDlj1b1qoQdd8sdIImUvZe89ZMdbwrBEEXnuT6mpKWq93crbx+rn7or0m4049kjjSc5ebKwlCaq2Oh+VvyrQBDAEHIPINZNgpa4MrdEBYk+tXNOcva8/wsQPpXJhaje/Vtm9eCW3SxboooruOYKKKKACiiigAooooAKKKKACsi5Yxwx2w4I+Zvc54rWrPCBtSleT7sY3fpxXJiotpJddP6+43oOzbfTUWJEsYfNlGZW6D+lUyZbuf+8x6DsBSu0l5ccDJbgD0FaltbLbpgcseretcsIOu+WOkEbyl7Jcz1kwtrZbdMDlj1b1qeimTSCKJnboBXpJRpxstEjjbcn5kd1crbpk8sei1lKst3P6sep7AUoEt5cHux6nsBVyWSOxi8qLmQ9T/U15s5uu+aWkEdkY+y92OsmR3TJbQfZoj8x5c1YsBshCH7xG8/j/8AqqjaQG5mLPygOWJ71ctZPOu53X7oAUVdCTc1PZPRLyJqK0XH5su0UUV6RxhRRRQAUUUUAFFFFABRRRQAVTvIyqTSL/EmG/A1cpGUMpVhkEYNRUhzxaKhLldyjpcQEbSnqTgfSr9VrRGg3QtkjJKt6j/GrNRh48tNIqq7zbCqepAmBVXks4GKuVXvGEcQkP8AAcgep7U6yvTaYqbtNFd5EsIRFHgzNyT6VUt4HupTycZyzGlggku5iSTjOWarNzcrbp9nt+COCR2/+vXm6TXPPSC2R26x92OsnuNu50ij+zQcAcMR/KrOnxeXb5IwX5/DtVKytTM+9x+7B/76Na1dOGjKcvay+RhWaiuRfMWiiiu45gooooAKKKKACiiigApKbLKkKF3OAKy5NQnZjtYIvYAVhVxEKXxGtOlKpsa9NaRE+86r9TWG08r/AHpHP41HXJLH/wAsTdYXuzaa9t1/5aA/QZqI6lCOiufwrLp8CCWdEJIDHHFZfXKsnZWL+rQSuzVhvYZmCglWPQMOtN1FS8KIvVnApF06NWDB5Mg57VZdA+OSCDkY+ldyjUnTcahzNwjJOBQuJ1to/s8B+Yfeb/PeobO0M53PxGOp9at/2bFnJdz3OT1qveXYYeTBxGOCR3/+tXJUhyvnq7LZHRCV1y09+rL8c9vgKkiADgDOKlBB6HP0rnqUMV+6SPoaI49reInhV0Z0FLWIt3OnSVvx5q5aXxdtkxAJ6N0rpp4ynN22Mp4eUVcv0UUxpUVtpPNdTaW5glcfRSUUxC0yWVYYy7nAH60SypDGXc4ArGuJ3uZMnOB0Udq5sRiFSVlubUqTm/ILm4e4k3NwB0X0qKpVtp3+7E35YqVdOnbrtX6mvK9nVqO9mzv54QVrlWitBdL/AL8v5Cpl06Beu5vqa0jg6r6WIeIpoyaASDkHB9q21toF6RJ+IzQ9tA4wYl/AYrX6hPuZ/Wo9jIjkk8xfnbqP4jWpfKzrGiMQWcDINU7iz8iRHQkpuHXqOau3rEQ/IMuzbV+pq6MJQhOM/ImpJSlFxKd7dceRCfkHBOetUa1oNPjRQZRvb9BVjyIcY8pP++RSlhatV803Yarwpq0UYVFbLWVu3/LMD6HFQtpkR+67r9eaylgqq21LWJg9zMpKvtpkg+5Ip+oxULWNwv8ABu/3TmsZYerHeJqqsHsyzY3ucRSnnorH+Rqy8LGTcCPbPasdopE+8jD6ir9je5xFKeeisf5GuuhXvanVOerSt78C+BhQPQYopaK9M4hjxpJjegbHTIpwUL90AfQUUUrK9x3ewtFFFMQUUUUAFFFFACMAwIIyDQQCQSMkciiiiwC0UUUAFFFFABSUUUALTGijf70an6iiik0nuNO2w7oMUUUUxH//2Q==';
+
+// ===== SUPABASE CONFIG =====
+// Conexión pública del proyecto Supabase. La anon key es pública, NO uses aquí service_role.
+const SUPABASE_URL = 'https://etvjotjriuueiefdzuvk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0dmpvdGpyaXV1ZWllZmR6dXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTM3NTAsImV4cCI6MjA5NDYyOTc1MH0.Cr5peeM8Y7y5RYybXdpJlSSWi1Cu6iVeUshb9AqbR74';
+
+const REMOTE={
+  enabled:true,
+  online:false,
+  loading:false,
+  tables:{consultorios:'consultorios',users:'usuarios',pacientes:'pacientes',citas:'citas',turnos:'turnos',consultas:'consultas',formulas:'formulas',medicamentos_formula:'medicamentos_formula'},
+  headers(){return {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'return=representation'}},
+  endpoint(table,qs=''){return `${SUPABASE_URL}/rest/v1/${table}${qs}`},
+  async req(table,opts={},qs=''){
+    const res=await fetch(this.endpoint(table,qs),{...opts,headers:{...this.headers(),...(opts.headers||{})}});
+    if(!res.ok){const txt=await res.text();throw new Error(`${table}: ${res.status} ${txt}`)}
+    const txt=await res.text();return txt?JSON.parse(txt):null;
+  },
+  toLocal(key,row){
+    if(!row)return row;
+    if(key==='consultorios')return {id:row.id,num:row.numero,medico:row.medico,especialidad:row.especialidad,cuposMax:row.cupos_max||0,cuposExtra:row.cupos_extra||0,regProf:row.registro_profesional||'',tipo:row.tipo||'medico',activo:row.activo!==false};
+    if(key==='users')return {id:row.id,nombre:row.nombre,usuario:row.usuario,password:row.password,rol:row.rol,consultorio:row.consultorio_id||null,especialidad:row.especialidad||null,registro:row.registro_profesional||null,activo:row.activo!==false};
+    if(key==='pacientes')return {id:row.id,tipoDoc:row.tipo_doc,documento:row.documento,nombre:row.nombre,edad:row.edad,sexo:row.sexo,telefono:row.telefono,direccion:row.direccion,estadoCivil:row.estado_civil,miembro:row.miembro,iglesia:row.iglesia,tipo:row.tipo,presion:row.presion||'',peso:row.peso||'',altura:row.altura||'',triajeRealizado:!!row.triaje_realizado,triajeFecha:row.triaje_fecha||'',fecha:row.created_at};
+    if(key==='citas')return {id:row.id,codigo:row.codigo,pacienteId:row.paciente_id,consultorioId:row.consultorio_id,especialidad:row.especialidad,bloque:row.bloque,jornada:row.jornada||'',hora:row.hora||'',ruta:row.ruta||[],estado:row.estado,turnoActivado:row.turno_activado,fecha:row.created_at};
+    if(key==='turnos')return {id:row.id,codigo:row.codigo,pacienteId:row.paciente_id,consultorioId:row.consultorio_id,citaId:row.cita_id,estado:row.estado,bloque:row.bloque,jornada:row.jornada||'',ruta:row.ruta||[],rutaIndex:row.ruta_index||0,llamadoEn:row.llamado_en,fecha:row.created_at};
+    if(key==='consultas')return {id:row.id,turnoId:row.turno_id,pacienteId:row.paciente_id,consultorioId:row.consultorio_id,medicoId:row.medico_id,motivo:row.motivo,diagnostico:row.diagnostico,tratamiento:row.tratamiento,observaciones:row.observaciones,fecha:row.created_at};
+    if(key==='formulas')return {id:row.id,consultaId:row.consulta_id,pacienteId:row.paciente_id,medicoId:row.medico_id,indicaciones:row.indicaciones,fecha:row.created_at};
+    if(key==='medicamentos_formula')return {id:row.id,formulaId:row.formula_id,medicamento:row.medicamento,dosis:row.dosis,frecuencia:row.frecuencia,duracion:row.duracion,fecha:row.created_at};
+    return row;
+  },
+  toRemote(key,row){
+    if(!row)return row;
+    if(key==='consultorios')return {id:row.id,numero:row.num,medico:row.medico,especialidad:row.especialidad,cupos_max:row.cuposMax||0,cupos_extra:row.cuposExtra||0,registro_profesional:row.regProf||'',tipo:row.tipo||'medico',activo:row.activo!==false};
+    if(key==='users')return {id:row.id,nombre:row.nombre,usuario:row.usuario,password:row.password,rol:row.rol,consultorio_id:row.consultorio||null,especialidad:row.especialidad||null,activo:row.activo!==false};
+    if(key==='pacientes')return {id:row.id,tipo_doc:row.tipoDoc,documento:row.documento,nombre:row.nombre,edad:row.edad||0,sexo:row.sexo,telefono:row.telefono||'',direccion:row.direccion||'',estado_civil:row.estadoCivil||'',miembro:row.miembro||'',iglesia:row.iglesia||'',tipo:row.tipo||'',presion:row.presion||'',peso:row.peso||'',altura:row.altura||'',triaje_realizado:!!row.triajeRealizado,triaje_fecha:row.triajeFecha||null};
+    if(key==='citas')return {id:row.id,codigo:row.codigo,paciente_id:row.pacienteId,consultorio_id:row.consultorioId,especialidad:row.especialidad,bloque:row.bloque,jornada:row.jornada||'',hora:row.hora||null,ruta:row.ruta||[],estado:row.estado||'pendiente',turno_activado:!!row.turnoActivado};
+    if(key==='turnos')return {id:row.id,codigo:row.codigo,paciente_id:row.pacienteId,consultorio_id:row.consultorioId,cita_id:row.citaId||null,estado:row.estado||'esperando',bloque:row.bloque||'',jornada:row.jornada||'',ruta:row.ruta||[],ruta_index:row.rutaIndex||0,llamado_en:row.llamadoEn||null};
+    if(key==='consultas')return {id:row.id,turno_id:row.turnoId,paciente_id:row.pacienteId,consultorio_id:row.consultorioId,medico_id:row.medicoId||null,motivo:row.motivo||'',diagnostico:row.diagnostico||'',tratamiento:row.tratamiento||'',observaciones:row.observaciones||''};
+    if(key==='formulas')return {id:row.id,consulta_id:row.consultaId,paciente_id:row.pacienteId,medico_id:row.medicoId||null,indicaciones:row.indicaciones||''};
+    if(key==='medicamentos_formula')return {id:row.id,formula_id:row.formulaId,medicamento:row.medicamento,dosis:row.dosis||'',frecuencia:row.frecuencia||'',duracion:row.duracion||''};
+    return row;
+  },
+  async loadKey(key){
+    const table=this.tables[key]; if(!table)return;
+    const order= key==='consultorios'?'?select=*&order=numero.asc': key==='turnos'||key==='citas'||key==='pacientes'||key==='consultas'?'?select=*&order=created_at.asc':'?select=*';
+    const data=await this.req(table,{method:'GET'},order);
+    DB._silent=true;
+    DB.s(key,(data||[]).map(r=>this.toLocal(key,r)));
+    DB._silent=false;
+  },
+  async loadAll({rerender=false}={}){
+    if(this.loading)return;
+    this.loading=true;
+    try{
+      for(const key of ['consultorios','users','pacientes','citas','turnos','consultas','formulas','medicamentos_formula']) await this.loadKey(key);
+      this.online=true; localStorage.setItem('js_supabase_online','true');
+      if(rerender)render();
+    }catch(e){
+      console.error('Supabase load error:',e); this.online=false; localStorage.setItem('js_supabase_online','false');
+    }finally{this.loading=false;}
+  },
+  async syncKey(key,value){
+    if(!this.enabled||!this.tables[key])return;
+    try{
+      const arr=Array.isArray(value)?value:[value];
+      if(!arr.length)return;
+      const rows=arr.filter(x=>x&&x.id).map(x=>this.toRemote(key,x));
+      if(!rows.length)return;
+      await this.req(this.tables[key],{method:'POST',body:JSON.stringify(rows),headers:{'Prefer':'resolution=merge-duplicates,return=minimal'}},'?on_conflict=id');
+      this.online=true; localStorage.setItem('js_supabase_online','true');
+    }catch(e){console.error('Supabase sync error:',key,e);this.online=false;localStorage.setItem('js_supabase_online','false');}
+  }
+};
+window.REMOTE=REMOTE;
+
+function syncStatusHTML(){
+  const ok=localStorage.getItem('js_supabase_online')==='true';
+  return `<span style="font-size:11px;padding:4px 8px;border-radius:20px;background:${ok?'var(--green-light)':'var(--red-light)'};color:${ok?'var(--green)':'var(--red)'};margin-left:8px">${ok?'● Nube conectada':'● Modo local'}</span>`;
+}
+
+// ===== DATABASE =====
+const DB={
+  g(k){try{return JSON.parse(localStorage.getItem('js_'+k))}catch(e){return null}},
+  s(k,v){localStorage.setItem('js_'+k,JSON.stringify(v)); if(!this._silent&&window.REMOTE)REMOTE.syncKey(k,v)},
+  init(){
+    if(this.g('init2'))return;
+    this.s('config',{nombre:'Jornada de Salud IASD',fecha:new Date().toISOString().split('T')[0],ubicacion:'Iglesia Adventista del Séptimo Día',horarioAM:{inicio:'08:30',fin:'12:30'},horarioPM:{inicio:'14:00',fin:'15:30'}});
+    const docs=[
+      {id:'c1',num:1,medico:'Carlos Gustavo Bocanegra Vergaray',especialidad:'Urología',cuposMax:30,cuposExtra:0,regProf:''},
+      {id:'c2',num:2,medico:'Henrri Alex Canaviri Mauricio',especialidad:'Medicina General',cuposMax:30,cuposExtra:0,regProf:''},
+      {id:'c3',num:3,medico:'Teodora Damian Aldave',especialidad:'Medicina General',cuposMax:30,cuposExtra:0,regProf:''},
+      {id:'c4',num:4,medico:'Victor Hugo Chino Zuñiga',especialidad:'Medicina General',cuposMax:30,cuposExtra:0,regProf:''},
+      {id:'c5',num:5,medico:'Lizth de los Angeles Paredes Pacoricona',especialidad:'Pediatría',cuposMax:20,cuposExtra:0,regProf:''},
+      {id:'c6',num:6,medico:'Americo Franco Tinta',especialidad:'Gineco-Obstetricia',cuposMax:30,cuposExtra:0,regProf:''},
+      {id:'c7',num:7,medico:'Raquel Esperanza Buitron Loli',especialidad:'Terapia Física y Rehab.',cuposMax:15,cuposExtra:0,regProf:''},
+      {id:'c8',num:8,medico:'Carmen Rosa Mera Becerra',especialidad:'Terapia Física y Rehab.',cuposMax:15,cuposExtra:0,regProf:''},
+      {id:'c9',num:9,medico:'Andrea Lucia Facundo Ayala',especialidad:'Terapia Física y Rehab.',cuposMax:15,cuposExtra:0,regProf:''},
+      {id:'c10',num:10,medico:'Walker Gustavo Ponce Iparraguirre',especialidad:'Odontología',cuposMax:15,cuposExtra:0,regProf:''},
+      {id:'c11',num:11,medico:'Angel Cortez Lopez',especialidad:'Odontología',cuposMax:15,cuposExtra:0,regProf:''},
+      {id:'c12',num:12,medico:'Nilva Rosa Casamayor Barreto',especialidad:'Odontología',cuposMax:15,cuposExtra:0,regProf:''},
+      {id:'c13',num:13,medico:'Marlon Joseth Contreras Moreno',especialidad:'Nutrición',cuposMax:12,cuposExtra:0,regProf:''},
+      {id:'c14',num:14,medico:'Rosmery Yasmin Huayhua Salas',especialidad:'Nutrición',cuposMax:12,cuposExtra:0,regProf:''},
+      {id:'c15',num:15,medico:'Mayra Eugenia Romero de Benavides',especialidad:'Nutrición',cuposMax:12,cuposExtra:0,regProf:''},
+      {id:'c16',num:16,medico:'Gady Canaviri Mauricio',especialidad:'Psicología',cuposMax:10,cuposExtra:0,regProf:''},
+      {id:'c17',num:17,medico:'Angelica Fonseca Cabezas',especialidad:'Psicología',cuposMax:10,cuposExtra:0,regProf:''},
+      {id:'c18',num:18,medico:'Giovanna Fabiola Calloapaza Gomez',especialidad:'Psicología',cuposMax:10,cuposExtra:0,regProf:''},
+      {id:'c19',num:19,medico:'Genoveva Elizet Silva Severino',especialidad:'Psicología',cuposMax:10,cuposExtra:0,regProf:''},
+      {id:'c20',num:20,medico:'Maximo Daniel Bernales Gaspar',especialidad:'Triaje',cuposMax:0,cuposExtra:0,regProf:''}
+    ];
+    this.s('consultorios',docs);
+    const users=[
+      {id:'u0',nombre:'Administrador',usuario:'admin',password:'admin123',rol:'admin',consultorio:null,especialidad:null,registro:null},
+      {id:'u_reg',nombre:'Registro Principal',usuario:'registro',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+      {id:'u_reg1',nombre:'Registro 1',usuario:'registro1',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+      {id:'u_reg2',nombre:'Registro 2',usuario:'registro2',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+      {id:'u_reg3',nombre:'Registro 3',usuario:'registro3',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+      {id:'u_reg4',nombre:'Registro 4',usuario:'registro4',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+      {id:'u_citas',nombre:'Encargado Citas',usuario:'citas',password:'citas123',rol:'citas',consultorio:null,especialidad:null,registro:null}
+    ];
+    docs.forEach((d,i)=>{
+      const fn=d.medico.split(' ')[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      users.push({id:'um_'+d.id,nombre:d.medico,usuario:fn+(i+1),password:'1234',rol:'medico',consultorio:d.id,especialidad:d.especialidad,registro:d.regProf});
+    });
+    this.s('users',users);
+    this.s('pacientes',[]);this.s('turnos',[]);this.s('citas',[]);this.s('consultas',[]);
+    this.s('turnoC',0);this.s('citaC',0);this.s('init2',true);
+  },
+  getEsp(){
+    const c=this.g('consultorios')||[];const e={};
+    c.forEach(x=>{if(!e[x.especialidad])e[x.especialidad]={cons:[],cupos:0};e[x.especialidad].cons.push(x);e[x.especialidad].cupos+=x.cuposMax+(x.cuposExtra||0)});
+    return e;
+  },
+  jornadaTurno(t){
+    if(!t)return'';
+    const ci=(this.g('citas')||[]).find(c=>c.id===t.citaId);
+    return (t.jornada||(ci&&(ci.jornada||citaJornadaLegacy(ci)))||'');
+  },
+  cuposUsados(cid,jornada=''){
+    const t=this.g('turnos')||[];const ci=this.g('citas')||[];
+    const matchJ=(j)=>!jornada||j===jornada;
+    const usadosTurnos=t.filter(x=>x.consultorioId===cid&&x.estado!=='cancelado'&&matchJ(this.jornadaTurno(x))).length;
+    const usadosCitas=ci.filter(x=>x.consultorioId===cid&&x.estado!=='cancelado'&&!x.turnoActivado&&matchJ(getCitaJornada(x))).length;
+    return usadosTurnos+usadosCitas;
+  },
+  cuposDisp(cid,jornada=''){const c=(this.g('consultorios')||[]).find(x=>x.id===cid);if(!c)return 0;return(c.cuposMax+(c.cuposExtra||0))-this.cuposUsados(cid,jornada)},
+  nextT(){const nums=(this.g('turnos')||[]).map(t=>parseInt(String(t.codigo||'').replace(/\D/g,''))||0);let n=Math.max(this.g('turnoC')||0,...nums.filter(x=>x<999999))+1;this.s('turnoC',n);const suf=Date.now().toString().slice(-4);return'T-'+String(n).padStart(3,'0')+'-'+suf},
+  nextCi(){const nums=(this.g('citas')||[]).map(c=>parseInt(String(c.codigo||'').replace(/\D/g,''))||0);let n=Math.max(this.g('citaC')||0,...nums.filter(x=>x<999999))+1;this.s('citaC',n);const suf=Date.now().toString().slice(-4);return'C-'+String(n).padStart(3,'0')+'-'+suf}
+};
+DB.init();
+
+
+function seleccionarConsultorioEquitativo(especialidad,jornada=''){
+  const CS=DB.g('consultorios')||[];
+  const candidatos=CS.filter(c=>c.especialidad===especialidad&&c.activo!==false);
+  if(!candidatos.length)return null;
+  const ordenados=candidatos.map(c=>({
+    c,
+    usados:DB.cuposUsados(c.id,jornada),
+    disp:DB.cuposDisp(c.id,jornada)
+  })).filter(x=>x.disp>0).sort((a,b)=>{
+    if(a.usados!==b.usados)return a.usados-b.usados;
+    if(a.disp!==b.disp)return b.disp-a.disp;
+    return (a.c.num||0)-(b.c.num||0);
+  });
+  return ordenados.length?ordenados[0].c:null;
+}
+
+function cuposEspecialidadPorJornada(especialidad,jornada=''){
+  const CS=DB.g('consultorios')||[];
+  return CS.filter(c=>c.especialidad===especialidad).reduce((sum,c)=>sum+DB.cuposDisp(c.id,jornada),0);
+}
+
+const JORNADAS=['Lunes - Libertad','Martes - Atalaya','Miércoles - Sion','Viernes - Patios'];
+function esHoraTexto(v){return /^\d{2}:\d{2}$/.test(String(v||''));}
+function citaJornadaLegacy(c){return esHoraTexto(c&&c.hora)?'':(c&&c.hora)||'';}
+function getCitaJornada(c){return (c&&c.jornada)||citaJornadaLegacy(c)||'';}
+function getCitaHora(c){return esHoraTexto(c&&c.hora)?c.hora:'';}
+function jornadaOptionsHTML(selected=''){
+  return JORNADAS.map(j=>`<option value="${j}" ${j===selected?'selected':''}>${j}</option>`).join('');
+}
+function bloqueHoras(bloque){
+  const arr=[];
+  let start=bloque==='tarde'?14*60:8*60+30;
+  let end=bloque==='tarde'?15*60+30:12*60+30;
+  for(let m=start;m<=end;m+=10){arr.push(String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'));}
+  return arr;
+}
+function llegadaAntes(hora){
+  if(!esHoraTexto(hora))return '—';
+  let [h,m]=hora.split(':').map(Number); let total=h*60+m-15; if(total<0)total+=24*60;
+  return String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0');
+}
+
+function fechaJornada(jornada){
+  const mapa={
+    'Lunes - Libertad':'Lunes 25 de mayo',
+    'Martes - Atalaya':'Martes 26 de mayo',
+    'Miércoles - Sion':'Miércoles 27 de mayo',
+    'Viernes - Patios':'Viernes 29 de mayo'
+  };
+  return mapa[jornada]||'—';
+}
+
+function citaOcupaConsultorio(c,consultorioId,jornada,hora){
+  return c&&c.consultorioId===consultorioId&&c.estado!=='cancelado'&&getCitaJornada(c)===jornada&&getCitaHora(c)===hora;
+}
+function consultorioDisponibleEnHora(consultorioId,jornada,hora){
+  const CI=DB.g('citas')||[];
+  return !CI.some(c=>citaOcupaConsultorio(c,consultorioId,jornada,hora));
+}
+function seleccionarConsultorioCita(especialidad,jornada='',hora=''){
+  const CS=DB.g('consultorios')||[];
+  const candidatos=CS.filter(c=>c.especialidad===especialidad&&c.activo!==false&&DB.cuposDisp(c.id,jornada)>0&&consultorioDisponibleEnHora(c.id,jornada,hora));
+  if(!candidatos.length)return null;
+  return candidatos.map(c=>({c,usados:DB.cuposUsados(c.id,jornada),disp:DB.cuposDisp(c.id,jornada)})).sort((a,b)=>{
+    if(a.usados!==b.usados)return a.usados-b.usados;
+    if(a.disp!==b.disp)return b.disp-a.disp;
+    return (a.c.num||0)-(b.c.num||0);
+  })[0].c;
+}
+function especialidadesSeleccionadasCita(){const arr=[];document.querySelectorAll('#cEspG input:checked').forEach(cb=>arr.push(cb.value));return arr;}
+function horaDisponibleParaSeleccion(hora){
+  const jor=$('cJor')?$('cJor').value:'';
+  const espSel=especialidadesSeleccionadasCita();
+  if(!espSel.length)return true;
+  return espSel.every(esp=>!!seleccionarConsultorioCita(esp,jor,hora));
+}
+function actualizarHorasCitas(){
+  const sel=$('cHora'); if(!sel)return;
+  const bloque=$('cBlq')?$('cBlq').value:'mañana';
+  const horas=bloqueHoras(bloque).filter(h=>horaDisponibleParaSeleccion(h));
+  sel.innerHTML=horas.length?horas.map(h=>`<option value="${h}">${h} — llegar ${llegadaAntes(h)}</option>`).join(''):'<option value="">Sin horarios disponibles</option>';
+}
+
+// ===== MIGRACIÓN SEGURA SIN BORRAR DATOS =====
+function migrarDatosBase(){
+  const CS=DB.g('consultorios')||[];
+  const triaje=CS.find(c=>c.id==='c20');
+  if(triaje){triaje.cuposMax=0;triaje.especialidad='Triaje';}
+  DB.s('consultorios',CS);
+  const U=DB.g('users')||[];
+  const registroBase=[
+    {id:'u_reg',nombre:'Registro Principal',usuario:'registro',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+    {id:'u_reg1',nombre:'Registro 1',usuario:'registro1',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+    {id:'u_reg2',nombre:'Registro 2',usuario:'registro2',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+    {id:'u_reg3',nombre:'Registro 3',usuario:'registro3',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null},
+    {id:'u_reg4',nombre:'Registro 4',usuario:'registro4',password:'registro123',rol:'registro',consultorio:null,especialidad:null,registro:null}
+  ];
+  registroBase.forEach(r=>{
+    const u=U.find(x=>x.id===r.id||x.usuario===r.usuario);
+    if(u)Object.assign(u,r); else U.push(r);
+  });
+  CS.forEach((d,i)=>{
+    if(!U.find(u=>u.rol==='medico'&&u.consultorio===d.id)){
+      const fn=d.medico.split(' ')[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      U.push({id:'um_'+d.id,nombre:d.medico,usuario:fn+(i+1),password:'1234',rol:'medico',consultorio:d.id,especialidad:d.especialidad,registro:d.regProf||''});
+    }
+  });
+  DB.s('users',U);
+}
+migrarDatosBase();
+
+function turnoActivoPaciente(pid){
+  return (DB.g('turnos')||[]).find(t=>t.pacienteId===pid&&['esperando','llamando','en_atencion'].includes(t.estado));
+}
+function citaActivaPaciente(pid){
+  return (DB.g('citas')||[]).find(c=>c.pacienteId===pid&&['pendiente','activada'].includes(c.estado));
+}
+
+// ===== AUDIO =====
+function playBell(){try{
+  const c=new(window.AudioContext||window.webkitAudioContext)();
+  const master=c.createGain(); master.connect(c.destination);
+  master.gain.setValueAtTime(.0001,c.currentTime);
+  master.gain.exponentialRampToValueAtTime(.35,c.currentTime+.03);
+  master.gain.exponentialRampToValueAtTime(.01,c.currentTime+2.8);
+  const notes=[659,784,988,784];
+  notes.forEach((freq,i)=>{
+    const o=c.createOscillator(); const g=c.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(freq,c.currentTime+i*.32);
+    g.gain.setValueAtTime(.001,c.currentTime+i*.32);
+    g.gain.exponentialRampToValueAtTime(.28,c.currentTime+i*.32+.04);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.32+.55);
+    o.connect(g); g.connect(master); o.start(c.currentTime+i*.32); o.stop(c.currentTime+i*.32+.65);
+  });
+}catch(e){console.warn('Audio bloqueado por el navegador',e)}}
+
+// ===== STATE =====
+let CU=null,CP='dashboard',tempMeds=[];
+const $=id=>document.getElementById(id);
+
+// ===== RENDER =====
+function render(){
+  if(location.hash==='#tv'){renderTV();return}
+  if(location.hash==='#agendar'){renderPublicAgendar();return}
+  if(!CU){renderLogin();return}
+  if(CU.rol==='medico'){renderMedico();return}
+  renderMain();
+}
+
+// ===== LOGIN =====
+function renderLogin(){
+  $('app').innerHTML=`<div class="login-page"><div class="login-card fade-up">
+    <img src="${LOGO}" alt="IASD"><h1>Jornada de Salud</h1><p class="subtitle">Iglesia Adventista del Séptimo Día</p>
+    <div id="loginErr" class="login-error">Usuario o contraseña incorrectos</div>
+    <div class="form-group"><label>Usuario</label><input type="text" id="lU" placeholder="Usuario" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="form-group" style="margin-top:12px"><label>Contraseña</label><input type="password" id="lP" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div style="margin-top:18px"><button class="btn btn-primary" onclick="doLogin()">Iniciar Sesión</button></div>
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center">
+      <a href="#tv" style="font-size:12px;color:var(--blue)" onclick="setTimeout(render,50)">📺 Pantalla TV</a>
+      <a href="#agendar" style="font-size:12px;color:var(--blue)" onclick="setTimeout(render,50)">📅 Agendar Cita</a>
+    </div></div></div>`;
+}
+function doLogin(){
+  const u=$('lU').value.trim(),p=$('lP').value.trim();
+  const found=(DB.g('users')||[]).find(x=>x.usuario===u&&x.password===p);
+  if(found){CU=found;CP=found.rol==='medico'?'consultorio':found.rol==='citas'?'citas':found.rol==='registro'?'registro':'dashboard';render()}
+  else{$('loginErr').style.display='block'}
+}
+function logout(){CU=null;location.hash='';render()}
+// ===== MAIN LAYOUT =====
+function renderMain(){
+  const nav=getNav();
+  $('app').innerHTML=`<div class="app-container"><div class="sidebar">
+    <div class="sidebar-brand"><img src="${LOGO}" alt="IASD"><div class="brand-text"><h1>Jornada de Salud</h1><span>Sistema de Gestión</span></div></div>
+    <div class="sidebar-nav">${nav.map(n=>n.sec?`<div class="nav-section">${n.sec}</div>`:`<div class="nav-item ${CP===n.pg?'active':''}" onclick="CP='${n.pg}';render()"><span class="nav-icon">${n.ic}</span>${n.lb}</div>`).join('')}</div>
+    <div class="sidebar-user"><div class="user-info"><div class="user-avatar">${CU.nombre[0]}</div><div><div class="user-name">${CU.nombre}</div><div class="user-role">${CU.rol.toUpperCase()}</div></div></div>
+    <button class="btn-logout" onclick="logout()">Cerrar Sesión</button></div></div>
+    <div class="main-content" id="pc"></div></div>`;
+  renderPage();
+}
+function getNav(){
+  const n=[];
+  if(CU.rol==='admin'){
+    n.push({sec:'Principal'},{pg:'dashboard',ic:'📊',lb:'Dashboard'});
+    n.push({sec:'Atención'},{pg:'registro',ic:'📋',lb:'Registro Pacientes'},{pg:'citas',ic:'📅',lb:'Agendar Citas'},{pg:'turnos',ic:'🔄',lb:'Gestión de Turnos'});
+    n.push({sec:'Administración'},{pg:'consultorios',ic:'🏥',lb:'Consultorios'},{pg:'usuarios',ic:'👥',lb:'Usuarios'},{pg:'config',ic:'⚙️',lb:'Configuración'});
+    n.push({sec:'Informes'},{pg:'reportes',ic:'📈',lb:'Reportes'},{pg:'exportar',ic:'📄',lb:'Exportar PDF'});
+  }else if(CU.rol==='registro'){
+    n.push({sec:'Atención'},{pg:'registro',ic:'📋',lb:'Registro Pacientes'},{pg:'turnos',ic:'🔄',lb:'Gestión de Turnos'});
+  }else if(CU.rol==='citas'){
+    n.push({sec:'Atención'},{pg:'citas',ic:'📅',lb:'Agendar Citas'});
+  }
+  return n;
+}
+function renderPage(){
+  const el=$('pc');if(!el)return;
+  const pages={dashboard:pgDash,registro:pgReg,citas:pgCitas,turnos:pgTurnos,consultorios:pgCons,usuarios:pgUsers,config:pgConfig,reportes:pgReportes,exportar:pgExportar};
+  try{(pages[CP]||pgDash)(el);}catch(err){
+    console.error('Error renderizando página:',CP,err);
+    el.innerHTML=`<div class="page-header"><h2>Error de pantalla</h2><p>No se pudo cargar ${CP}. Recarga con Ctrl+F5 o vuelve al Dashboard.</p></div><div class="card"><pre style="white-space:pre-wrap;color:var(--red);font-size:12px">${err.message||err}</pre></div>`;
+  }
+}
+// ===== DASHBOARD =====
+function pgDash(el){
+  const P=DB.g('pacientes')||[],T=DB.g('turnos')||[],CI=DB.g('citas')||[],CO=DB.g('consultas')||[],CS=DB.g('consultorios')||[];
+  const esp=T.filter(t=>t.estado==='esperando').length;
+  const llam=T.filter(t=>t.estado==='llamando').length;
+  const act=T.filter(t=>t.estado==='en_atencion').length;
+  const pendCitas=CI.filter(c=>c.estado==='pendiente').length;
+  const totalFlujo=Math.max(1,esp+llam+act+CO.length+pendCitas);
+  const atendDeg=Math.round((CO.length/totalFlujo)*360);
+  const cuU=CS.reduce((s,c)=>s+(Number(DB.cuposUsados(c.id))||0),0);
+  const cuT=CS.reduce((s,c)=>s+(Number(c.cuposMax)||0)+(Number(c.cuposExtra)||0),0);
+  const barras=[['En espera',esp,'var(--accent)'],['Llamando',llam,'var(--red)'],['En atención',act,'var(--blue)'],['Citas pendientes',pendCitas,'var(--purple)'],['Atendidos',CO.length,'var(--green)']];
+  const rows=CS.map(c=>{
+    const u=Number(DB.cuposUsados(c.id))||0;
+    const e=T.filter(t=>t.consultorioId===c.id&&t.estado==='esperando').length;
+    const l=T.filter(t=>t.consultorioId===c.id&&t.estado==='llamando').length;
+    const a=CO.filter(x=>x.consultorioId===c.id).length;
+    const cap=(Number(c.cuposMax)||0)+(Number(c.cuposExtra)||0);
+    return `<tr><td><strong>#${c.num||''}</strong></td><td>${c.especialidad||''}</td><td>${String(c.medico||'').split(' ').slice(0,2).join(' ')}</td><td>${u}/${cap}</td><td><span class="badge badge-wait">${e}</span></td><td><span class="badge badge-noshow">${l}</span></td><td><span class="badge badge-done">${a}</span></td></tr>`;
+  }).join('');
+  el.innerHTML=`<div class="page-header"><h2>Dashboard ${syncStatusHTML()}</h2><p>Resumen de la jornada de salud</p></div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Pacientes</div><div class="stat-value">${P.length}</div></div>
+    <div class="stat-card"><div class="stat-label">En espera</div><div class="stat-value" style="color:var(--accent)">${esp}</div></div>
+    <div class="stat-card"><div class="stat-label">Llamando / Atención</div><div class="stat-value" style="color:var(--blue)">${(llam?1:0)+(act?1:0)}</div></div>
+    <div class="stat-card"><div class="stat-label">Consultas</div><div class="stat-value" style="color:var(--green)">${CO.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Citas pendientes</div><div class="stat-value" style="color:var(--purple)">${pendCitas}</div></div>
+    <div class="stat-card"><div class="stat-label">Cupos usados</div><div class="stat-value">${cuU}<span style="font-size:14px;color:var(--text-muted)">/${cuT}</span></div></div>
+  </div>
+  <div class="card"><div class="card-title">📊 Resumen visual</div>
+    <div style="display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:center">
+      <div style="width:220px;height:220px;border-radius:50%;background:conic-gradient(var(--green) 0 ${atendDeg}deg,var(--accent-light) ${atendDeg}deg 360deg);display:flex;align-items:center;justify-content:center;margin:auto">
+        <div style="width:135px;height:135px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:var(--shadow)">
+          <div><div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--green)">${CO.length}</div><div style="font-size:12px;color:var(--text-muted)">atendidos</div></div>
+        </div>
+      </div>
+      <div>${barras.map(([lb,val,col])=>`<div class="chart-bar-row"><div class="chart-bar-label">${lb}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.min(100,Number(val)*10)}%;background:${col}">${val}</div></div><div class="chart-bar-value">${val}</div></div>`).join('')}</div>
+    </div>
+  </div>
+  <div class="card"><div class="card-title">🏥 Consultorios</div><div class="table-wrap"><table>
+    <tr><th>#</th><th>Especialidad</th><th>Médico</th><th>Cupos</th><th>Espera</th><th>Llamando</th><th>Atendidos</th></tr>${rows}
+  </table></div></div>`;
+  setTimeout(actualizarHorasCitas,0);
+}
+
+// ===== REGISTRO =====
+function pgReg(el){
+  const P=DB.g('pacientes')||[],E=DB.getEsp();
+  el.innerHTML=`<div class="page-header"><h2>Registro de Pacientes</h2><p>Registrar nuevos pacientes y asignar turnos</p></div>
+  <div class="tabs"><button class="tab-btn active" onclick="showTab('nuevo',this)">Nuevo paciente</button>
+  <button class="tab-btn" onclick="showTab('buscar',this)">Buscar / Con cita</button>
+  <button class="tab-btn" onclick="showTab('lista',this)">Lista (${P.length})</button></div>
+  <div id="tab_nuevo"><div class="card"><div class="card-title">📋 Datos del paciente</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Tipo Doc.</label><select id="rTD"><option>CC</option><option>TI</option><option>CE</option><option>Pasaporte</option><option>RC</option></select></div>
+      <div class="form-group"><label>Nº Documento *</label><input id="rDoc" placeholder="Número"></div>
+      <div class="form-group"><label>Nombre completo *</label><input id="rNom" placeholder="Nombres y apellidos"></div>
+      <div class="form-group"><label>Edad *</label><input type="number" id="rEdad" min="0" max="120"></div>
+      <div class="form-group"><label>Sexo</label><select id="rSex"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
+      <div class="form-group"><label>Teléfono</label><input id="rTel"></div>
+      <div class="form-group"><label>Dirección</label><input id="rDir"></div>
+      <div class="form-group"><label>Estado civil</label><select id="rEC"><option>Soltero/a</option><option>Casado/a</option><option>Unión libre</option><option>Divorciado/a</option><option>Viudo/a</option></select></div>
+      <div class="form-group"><label>¿Miembro iglesia?</label><select id="rMi"><option value="si">Sí</option><option value="no">No</option></select></div>
+      <div class="form-group"><label>Iglesia procedencia</label><input id="rIg" placeholder="Nombre iglesia"></div>
+      <div class="form-group"><label>Día / Distrito de jornada</label><select id="rJor" onchange="actualizarCuposRegistro()"><option>Lunes - Libertad</option><option>Martes - Atalaya</option><option>Miércoles - Sion</option><option>Viernes - Patios</option></select></div>
+    </div></div>
+    <div class="card"><div class="card-title">🏥 Especialidades</div>
+    <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Seleccione las que necesita. Se asignarán en orden.</p>
+    <div class="checkbox-grid" id="espGrid">${Object.entries(E).map(([e,d])=>{const cd=cuposEspecialidadPorJornada(e,'Lunes - Libertad');
+    return`<label class="checkbox-item" data-esp="${e}"><input type="checkbox" value="${e}" onchange="this.parentElement.classList.toggle('checked',this.checked)"> ${e}<span class="cupos" data-cupos-esp="${e}">${cd} cupos</span></label>`}).join('')}</div></div>
+    <div class="btn-group"><button class="btn btn-primary" onclick="regPaciente()">✓ Registrar y generar turno</button><button class="btn btn-secondary" onclick="render()">Limpiar</button></div>
+  </div>
+  <div id="tab_buscar" style="display:none"><div class="card"><div class="card-title">🔍 Buscar</div>
+    <div class="search-box"><input id="bPac" placeholder="Documento, nombre o código de cita..." oninput="buscarPac()"></div>
+    <div id="resBuscar"></div></div></div>
+  <div id="tab_lista" style="display:none"><div class="card"><div class="card-title">📋 Pacientes (${P.length})</div>
+    <div class="table-wrap"><table><tr><th>Doc</th><th>Nombre</th><th>Edad</th><th>Turnos</th><th>Estado</th></tr>
+    ${P.slice().reverse().map(p=>{const t=(DB.g('turnos')||[]).filter(x=>x.pacienteId===p.id),pend=t.filter(x=>x.estado!=='atendido').length;
+    return`<tr><td>${p.documento}</td><td><strong>${p.nombre}</strong></td><td>${p.edad}</td><td>${t.length}</td>
+    <td><span class="badge ${pend?'badge-wait':'badge-done'}">${pend?pend+' pend.':'Completo'}</span></td></tr>`}).join('')}
+    </table></div></div></div>`;
+}
+
+function actualizarCuposRegistro(){
+  const jor=$('rJor')?$('rJor').value:'';
+  const E=DB.getEsp();
+  Object.entries(E).forEach(([e,d])=>{
+    const el=document.querySelector(`[data-cupos-esp="${e}"]`);
+    if(el){
+      const cd=cuposEspecialidadPorJornada(e,jor);
+      el.textContent=cd+' cupos';
+    }
+  });
+}
+
+
+function actualizarCuposCitas(){
+  const jor=$('cJor')?$('cJor').value:'';
+  const E=DB.getEsp();
+  Object.entries(E).forEach(([e,d])=>{
+    const el=document.querySelector(`[data-cupos-cita-esp="${e}"]`);
+    if(el){
+      const cd=cuposEspecialidadPorJornada(e,jor);
+      el.textContent=cd+' cupos';
+    }
+  });
+  actualizarHorasCitas();
+}
+
+function showTab(t,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  ['nuevo','buscar','lista'].forEach(x=>{const el=$('tab_'+x);if(el)el.style.display=x===t?'':'none'});
+}
+async function regPaciente(){
+  const doc=$('rDoc').value.trim(),nom=$('rNom').value.trim(),edad=$('rEdad').value;
+  if(!doc||!nom||!edad){alert('Complete campos obligatorios: Documento, Nombre y Edad');return}
+  const espSel=[];document.querySelectorAll('#espGrid input:checked').forEach(cb=>espSel.push(cb.value));
+  if(!espSel.length){alert('Seleccione al menos una especialidad');return}
+  const P=DB.g('pacientes')||[];
+  const jor=$('rJor')?$('rJor').value:'';
+  let pac=P.find(p=>p.documento===doc);
+  if(pac&&turnoActivoPaciente(pac.id)){alert('Este paciente ya tiene un turno activo. Finalice la atención actual antes de crear otro turno.');return}
+  if(pac&&!confirm('Esta cédula ya existe registrada como: '+pac.nombre+'\n\n¿Deseas actualizar sus datos y crear una ruta nueva con las especialidades seleccionadas ahora?'))return;
+  if(!pac){
+    pac={id:'p_'+Date.now(),tipoDoc:$('rTD').value,documento:doc,nombre:nom.toUpperCase(),edad:+edad,sexo:$('rSex').value,
+      telefono:$('rTel').value.trim(),direccion:$('rDir').value.trim(),estadoCivil:$('rEC').value,miembro:$('rMi').value,
+      iglesia:$('rIg').value.trim(),fecha:new Date().toISOString(),tipo:'turno_libre'};
+    P.push(pac);DB.s('pacientes',P);
+    if(window.REMOTE) await REMOTE.syncKey('pacientes',[pac]);
+  }else{
+    pac.nombre=nom.toUpperCase();pac.edad=+edad;pac.telefono=$('rTel').value.trim()||pac.telefono;pac.direccion=$('rDir').value.trim()||pac.direccion;
+    pac.estadoCivil=$('rEC').value;pac.miembro=$('rMi').value;pac.iglesia=$('rIg').value.trim()||pac.iglesia;DB.s('pacientes',P);
+    if(window.REMOTE) await REMOTE.syncKey('pacientes',[pac]);
+  }
+  const CS=DB.g('consultorios')||[],T=DB.g('turnos')||[],ruta=[];
+  espSel.forEach(esp=>{
+    const best=seleccionarConsultorioEquitativo(esp,jor);
+    if(best)ruta.push(best.id);
+  });
+  if(!ruta.length){alert('No hay cupos disponibles para la jornada seleccionada: '+jor);return}
+  const cod=DB.nextT();
+  T.push({id:'t_'+Date.now(),codigo:cod,pacienteId:pac.id,consultorioId:ruta[0],estado:'esperando',
+    bloque:new Date().getHours()<13?'mañana':'tarde',jornada:jor,ruta:ruta,rutaIndex:0,fecha:new Date().toISOString()});
+  DB.s('turnos',T);
+  if(window.REMOTE) await REMOTE.syncKey('turnos',[T[T.length-1]]);
+  const info=ruta.map(cid=>{const c=CS.find(x=>x.id===cid);return c?c.especialidad+' (#'+c.num+')':''});
+  alert('✅ Paciente registrado!\n\n🎫 Turno: '+cod+'\n👤 '+pac.nombre+'\n\n📋 Ruta:\n'+info.map((c,i)=>'  '+(i+1)+'. '+c).join('\n'));
+  render();
+}
+function buscarPac(){
+  const q=$('bPac').value.trim().toLowerCase(),r=$('resBuscar');if(!q){r.innerHTML='';return}
+  const P=DB.g('pacientes')||[],CI=DB.g('citas')||[];
+  const fp=P.filter(p=>String(p.documento||'').toLowerCase().includes(q)||String(p.nombre||'').toLowerCase().includes(q));
+  const fc=CI.filter(c=>{
+    const p=P.find(x=>x.id===c.pacienteId);
+    return String(c.codigo||'').toLowerCase().includes(q)||(p&&(String(p.documento||'').toLowerCase().includes(q)||String(p.nombre||'').toLowerCase().includes(q)));
+  });
+  let h='';
+  fc.forEach(c=>{const p=P.find(x=>x.id===c.pacienteId);
+    h+=`<div style="padding:12px;border:1px solid var(--border);border-radius:8px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <div><strong>${c.codigo}</strong> — ${p?p.nombre:'—'}<br><span style="font-size:12px;color:var(--text-dim)">${c.especialidad} · ${getCitaJornada(c)||'—'} · ${getCitaHora(c)||'sin hora'} · Llegar ${llegadaAntes(getCitaHora(c))}</span></div>
+    ${c.estado==='pendiente'?`<button class="btn btn-sm btn-primary" onclick="abrirTriajeCita('${c.id}')">Registrar triaje y activar</button>`:`<span class="badge badge-done">${c.estado}</span>`}</div>`});
+  fp.forEach(p=>{const t=(DB.g('turnos')||[]).filter(x=>x.pacienteId===p.id), citas=CI.filter(c=>c.pacienteId===p.id&&c.estado==='pendiente');
+    h+=`<div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin:6px 0"><strong>${p.nombre}</strong> — ${p.documento}<br><span style="font-size:12px;color:var(--text-dim)">Turnos: ${t.map(x=>x.codigo).join(', ')||'Ninguno'} · Citas pendientes: ${citas.length}</span></div>`});
+  if(!h)h='<p style="color:var(--text-muted);font-size:13px;padding:12px">Sin resultados</p>';
+  r.innerHTML=h;
+}
+function activarCita(cid){
+  if(CU&&CU.rol==='medico'){alert('El médico no puede activar citas. El paciente debe pasar por Registro/Triaje primero.');return}
+  abrirTriajeCita(cid)
+}
+function abrirTriajeCita(cid){
+  if(!CU||!['registro','admin'].includes(CU.rol)){alert('La cita solo se activa desde Registro después de completar el triaje.');return}
+  const CI=DB.g('citas')||[],c=CI.find(x=>x.id===cid);if(!c)return;
+  const p=(DB.g('pacientes')||[]).find(x=>x.id===c.pacienteId);
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay" onclick="if(event.target===this)this.remove()"><div class="modal">
+  <div class="modal-title">🩺 Triaje antes del consultorio</div>
+  <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px"><strong>${p?p.nombre:'—'}</strong> · ${p?p.documento:'—'}<br>Cita: ${c.codigo} · ${getCitaJornada(c)} · ${getCitaHora(c)} · debe llegar ${llegadaAntes(getCitaHora(c))}</p>
+  <div class="form-grid">
+    <div class="form-group"><label>Medida de presión</label><input id="triPresion" placeholder="Ej: 120/80" value="${p&&p.presion?p.presion:''}"></div>
+    <div class="form-group"><label>Peso</label><input id="triPeso" placeholder="Ej: 70 kg" value="${p&&p.peso?p.peso:''}"></div>
+    <div class="form-group"><label>Altura / Estatura</label><input id="triAltura" placeholder="Ej: 1.70 m" value="${p&&p.altura?p.altura:''}"></div>
+  </div>
+  <div class="btn-group"><button class="btn btn-primary" onclick="guardarTriajeCita('${cid}')">Guardar triaje y activar consultorio</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button></div>
+  </div></div>`);
+}
+async function guardarTriajeCita(cid){
+  if(!CU||!['registro','admin'].includes(CU.rol)){alert('Solo Registro puede completar triaje y activar el turno.');return}
+  const CI=DB.g('citas')||[],c=CI.find(x=>x.id===cid);if(!c)return;
+  const P=DB.g('pacientes')||[],p=P.find(x=>x.id===c.pacienteId);if(!p)return;
+  const pres=($('triPresion')||{}).value.trim(), peso=($('triPeso')||{}).value.trim(), altura=($('triAltura')||{}).value.trim();
+  if(!pres||!peso||!altura){alert('Complete presión, peso y altura antes de activar el turno.');return}
+  p.presion=pres;p.peso=peso;p.altura=altura;p.triajeRealizado=true;p.triajeFecha=new Date().toISOString();
+  DB.s('pacientes',P);if(window.REMOTE)await REMOTE.syncKey('pacientes',[p]);
+  const T=DB.g('turnos')||[],cod=DB.nextT();
+  const ruta=(c.ruta&&c.ruta.length)?c.ruta:[c.consultorioId];
+  const nuevo={id:'t_'+Date.now(),codigo:cod,pacienteId:c.pacienteId,consultorioId:ruta[0],estado:'esperando',bloque:c.bloque,jornada:getCitaJornada(c),horaCita:getCitaHora(c),ruta:ruta,rutaIndex:0,citaId:c.id,fecha:new Date().toISOString()};
+  T.push(nuevo);DB.s('turnos',T);if(window.REMOTE)await REMOTE.syncKey('turnos',[nuevo]);
+  c.estado='activada';c.turnoActivado=true;DB.s('citas',CI);if(window.REMOTE)await REMOTE.syncKey('citas',[c]);
+  const modal=document.querySelector('.modal-overlay');if(modal)modal.remove();
+  alert('✅ Triaje guardado. Paciente activado en consultorio.\n🎫 Turno: '+cod);render();
+}
+// ===== CITAS =====
+function pgCitas(el){
+  const CI=DB.g('citas')||[],E=DB.getEsp();
+  el.innerHTML=`<div class="page-header"><h2>Agendar Citas Previas</h2><p>Registrar citas para pacientes</p></div>
+  <div class="card"><div class="card-title">📅 Nueva cita</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Tipo Doc.</label><select id="cTD"><option>CC</option><option>TI</option><option>CE</option><option>Pasaporte</option></select></div>
+      <div class="form-group"><label>Nº Documento *</label><input id="cDoc"></div>
+      <div class="form-group"><label>Nombre completo *</label><input id="cNom"></div>
+      <div class="form-group"><label>Edad</label><input type="number" id="cEdad" min="0" max="120"></div>
+      <div class="form-group"><label>Sexo</label><select id="cSex"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
+      <div class="form-group"><label>Teléfono</label><input id="cTel"></div>
+      <div class="form-group"><label>Dirección</label><input id="cDir"></div>
+      <div class="form-group"><label>Estado civil</label><select id="cEC"><option>Soltero/a</option><option>Casado/a</option><option>Unión libre</option><option>Divorciado/a</option><option>Viudo/a</option></select></div>
+      <div class="form-group"><label>¿Miembro?</label><select id="cMi"><option value="si">Sí</option><option value="no">No</option></select></div>
+      <div class="form-group"><label>Iglesia procedencia *</label><input id="cIg" placeholder="Iglesia de donde viene"></div>
+      <div class="form-group"><label>Día / Distrito de jornada</label><select id="cJor" onchange="actualizarCuposCitas();actualizarHorasCitas()">
+        <option value="Lunes - Libertad">Lunes - Libertad</option>
+        <option value="Martes - Atalaya">Martes - Atalaya</option>
+        <option value="Miércoles - Sion">Miércoles - Sion</option>
+        <option value="Viernes - Patios">Viernes - Patios</option>
+      </select></div>
+    </div>
+    <div style="margin-top:16px"><label style="font-size:12px;font-weight:500;color:var(--text-dim);display:block;margin-bottom:6px">Especialidades</label>
+    <div class="checkbox-grid" id="cEspG">${Object.entries(E).map(([e,d])=>{const cd=cuposEspecialidadPorJornada(e,'Lunes - Libertad');
+    return`<label class="checkbox-item"><input type="checkbox" value="${e}" onchange="this.parentElement.classList.toggle('checked',this.checked);actualizarHorasCitas()"> ${e}<span class="cupos" data-cupos-cita-esp="${e}">${cd}</span></label>`}).join('')}</div></div>
+    <div class="form-grid" style="margin-top:12px"><div class="form-group"><label>Bloque</label><select id="cBlq" onchange="actualizarHorasCitas()"><option value="mañana">Mañana (8:30-12:30)</option><option value="tarde">Tarde (2:00-3:30)</option></select></div><div class="form-group"><label>Hora exacta de cita</label><select id="cHora"></select><small style="font-size:11px;color:var(--text-muted)">El paciente debe llegar 15 minutos antes.</small></div></div>
+    <div class="btn-group"><button class="btn btn-primary" onclick="crearCita()">📅 Agendar cita</button></div>
+  </div>
+  <div class="card"><div class="card-title">📋 Citas (${CI.length})</div>
+    <div class="search-box"><select id="fJor" onchange="pgCitas($('pc'))"><option value="">Todas las jornadas</option><option>Lunes - Libertad</option><option>Martes - Atalaya</option><option>Miércoles - Sion</option><option>Viernes - Patios</option></select></div>
+    <div class="table-wrap"><table>
+    <tr><th>Código</th><th>Paciente</th><th>Especialidad</th><th>Jornada</th><th>Hora</th><th>Llegada</th><th>Bloque</th><th>Iglesia</th><th>Estado</th><th></th></tr>
+    ${(CI.slice().reverse().filter(c=>!$('fJor')||!$('fJor').value||getCitaJornada(c)===$('fJor').value)).map(c=>{const p=(DB.g('pacientes')||[]).find(x=>x.id===c.pacienteId);
+    return`<tr><td><strong>${c.codigo}</strong></td><td>${p?p.nombre:'—'}</td><td>${c.especialidad}</td>
+    <td>${getCitaJornada(c)||'—'}</td><td><strong>${getCitaHora(c)||'—'}</strong></td><td>${llegadaAntes(getCitaHora(c))}</td><td><span class="badge badge-cita">${c.bloque}</span></td><td>${p?p.iglesia||'—':'—'}</td>
+    <td><span class="badge badge-${c.estado==='pendiente'?'wait':c.estado==='activada'?'done':'noshow'}">${c.estado}</span></td>
+    <td><button class="btn btn-sm btn-secondary" onclick="pdfCita('${c.id}')">📄 PDF</button></td></tr>`}).join('')}
+  </table></div></div>`;
+  setTimeout(actualizarHorasCitas,0);
+}
+async function crearCita(){
+  const doc=$('cDoc').value.trim(),nom=$('cNom').value.trim();
+  if(!doc||!nom){alert('Complete documento y nombre');return}
+  const espSel=[];document.querySelectorAll('#cEspG input:checked').forEach(cb=>espSel.push(cb.value));
+  if(!espSel.length){alert('Seleccione al menos una especialidad');return}
+  const blq=$('cBlq').value,jor=($('cJor')?$('cJor').value:''),horaExacta=($('cHora')?$('cHora').value:'');
+  if(!horaExacta){alert('Seleccione una hora disponible para la cita');return}
+  let P=DB.g('pacientes')||[],pac=P.find(p=>p.documento===doc);
+  if(pac&&!confirm('Esta cédula ya existe registrada como: '+pac.nombre+'\n\n¿Deseas actualizar sus datos y crear una nueva cita con la ruta seleccionada ahora?'))return;
+  if(!pac){
+    pac={id:'p_'+Date.now(),tipoDoc:$('cTD').value,documento:doc,nombre:nom.toUpperCase(),edad:+($('cEdad').value)||0,sexo:$('cSex').value,
+      telefono:$('cTel').value.trim(),direccion:$('cDir').value.trim(),estadoCivil:$('cEC').value,miembro:$('cMi').value,
+      iglesia:$('cIg').value.trim(),fecha:new Date().toISOString(),tipo:'cita_previa'};
+    P.push(pac);
+  }else{
+    pac.tipoDoc=$('cTD').value;pac.nombre=nom.toUpperCase();pac.edad=+($('cEdad').value)||pac.edad||0;pac.sexo=$('cSex').value;
+    pac.telefono=$('cTel').value.trim()||pac.telefono||'';pac.direccion=$('cDir').value.trim()||pac.direccion||'';
+    pac.estadoCivil=$('cEC').value;pac.miembro=$('cMi').value;pac.iglesia=$('cIg').value.trim()||pac.iglesia||'';pac.tipo='cita_previa';
+  }
+  DB.s('pacientes',P);
+  if(window.REMOTE) await REMOTE.syncKey('pacientes',[pac]);
+  if(citaActivaPaciente(pac.id)){alert('Este paciente ya tiene una cita activa. Busque la cita existente o actívela en registro.');return}
+  const ruta=[];
+  for(const esp of espSel){
+    const best=seleccionarConsultorioCita(esp,jor,horaExacta);
+    if(!best){alert('No hay horario disponible a las '+horaExacta+' para '+esp+' en '+jor+'. Seleccione otra hora.');actualizarHorasCitas();return}
+    ruta.push(best.id);
+  }
+  if(!ruta.length){alert('No hay cupos');return}
+  const cod=DB.nextCi(),CI=DB.g('citas')||[];
+  const nuevaCita={id:'ci_'+Date.now(),codigo:cod,pacienteId:pac.id,consultorioId:ruta[0],especialidad:espSel.join(', '),
+    bloque:blq,jornada:jor,hora:horaExacta,ruta:ruta,estado:'pendiente',fecha:new Date().toISOString()};
+  CI.push(nuevaCita);DB.s('citas',CI);
+  if(window.REMOTE) await REMOTE.syncKey('citas',[nuevaCita]);
+  alert('✅ Cita agendada!\n📅 '+cod+'\n👤 '+pac.nombre+'\n📍 '+jor+'\n🕐 Hora cita: '+horaExacta+'\n⏱️ Debe llegar: '+llegadaAntes(horaExacta));render();
+}
+
+function pdfCita(cid){
+  const CI=DB.g('citas')||[],c=CI.find(x=>x.id===cid);if(!c)return;
+  const p=(DB.g('pacientes')||[]).find(x=>x.id===c.pacienteId),cfg=DB.g('config'),CS=DB.g('consultorios')||[];
+  const jornadaCita=getCitaJornada(c)||'—';
+  const fechaCita=fechaJornada(jornadaCita);
+  const horaCita=getCitaHora(c)||'—';
+  const horaLlegada=llegadaAntes(getCitaHora(c));
+  const ruta=(c.ruta||[]).map(id=>{const cc=CS.find(x=>x.id===id);return cc?cc.especialidad+' (Cons. #'+cc.num+')':''});
+  const h=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Cita ${c.codigo}</title>
+  <style>body{font-family:Arial,sans-serif;max-width:500px;margin:20px auto;padding:20px;border:2px solid #333;border-radius:10px}
+  .hd{text-align:center;border-bottom:2px solid #e8973e;padding-bottom:12px;margin-bottom:16px}
+  .hd h2{color:#e8973e;margin:0}.hd p{color:#666;font-size:12px;margin:4px 0}
+  .code{font-size:32px;font-weight:bold;text-align:center;color:#e8973e;margin:16px 0;letter-spacing:4px}
+  .info{margin:12px 0;font-size:14px;line-height:1.8}.info strong{display:inline-block;width:120px}
+  .ruta{background:#f8f6f1;padding:12px;border-radius:8px;margin:12px 0}.ruta h4{margin:0 0 8px;font-size:14px}.ruta ol{margin:0;padding-left:20px;font-size:13px}
+  .ft{text-align:center;margin-top:20px;font-size:11px;color:#999}</style></head><body>
+  <div class="hd"><h2>${cfg.nombre}</h2><p>${cfg.ubicacion} — Cúcuta</p></div>
+  <div class="code">${c.codigo}</div>
+  <div class="info"><strong>Paciente:</strong> ${p?p.nombre:'—'}<br><strong>Documento:</strong> ${p?p.documento:'—'}<br>
+  <strong>Fecha cita:</strong> ${fechaCita}<br><strong>Distrito:</strong> ${jornadaCita}<br><strong>Bloque:</strong> ${c.bloque==='mañana'?'Mañana (8:30-12:30)':'Tarde (2:00-3:30)'}<br><strong>Hora cita:</strong> ${horaCita}<br><strong>Llegar:</strong> ${horaLlegada}<br><strong>Iglesia:</strong> ${p?p.iglesia||'—':'—'}</div>
+  <div class="ruta"><h4>Ruta de atención:</h4><ol>${ruta.map(r=>'<li>'+r+'</li>').join('')}</ol></div>
+  <div class="ft">Presente este comprobante el día de la jornada<br>Iglesia Adventista del Séptimo Día</div></body></html>`;
+  const w=window.open('','_blank');w.document.write(h);w.document.close();setTimeout(()=>w.print(),500);
+}
+
+// ===== TURNOS =====
+function pgTurnos(el){
+  const T=DB.g('turnos')||[],P=DB.g('pacientes')||[],CS=DB.g('consultorios')||[];
+  el.innerHTML=`<div class="page-header"><h2>Gestión de Turnos</h2><p>Estado de todos los turnos</p></div>
+  <div class="card"><div class="search-box"><input id="fT" placeholder="Filtrar por turno o paciente..." oninput="filtT()">
+  <select id="fE" onchange="filtT()"><option value="">Todos</option><option value="esperando">Espera</option><option value="llamando">Llamando</option><option value="en_atencion">Atención</option><option value="atendido">Atendido</option></select></div>
+  <div class="table-wrap" id="tTbl">${tblTurnos(T,P,CS)}</div></div>`;
+}
+function tblTurnos(T,P,CS){
+  return`<table><tr><th>Turno</th><th>Tipo</th><th>Paciente</th><th>Consultorio</th><th>Ruta</th><th>Estado</th><th>Acción</th></tr>
+  ${T.slice().reverse().map(t=>{const p=P.find(x=>x.id===t.pacienteId),c=CS.find(x=>x.id===t.consultorioId);
+  const ruta=(t.ruta||[]).map((cid,i)=>{const cc=CS.find(x=>x.id===cid);const cls=i<t.rutaIndex?'completed':i===t.rutaIndex?(t.estado==='atendido'?'completed':'current'):'pending';
+  return`<span class="route-step ${cls}">${cc?cc.especialidad.substring(0,12):''}</span>`}).join('<span class="route-arrow">→</span>');
+  return`<tr><td><strong>${t.codigo}</strong></td><td><span class="badge ${t.citaId?'badge-cita':'badge-turno'}">${t.citaId?'Cita':'Libre'}</span></td>
+  <td>${p?p.nombre:'—'}</td><td>${c?c.especialidad+' #'+c.num:'—'}</td><td><div class="route-steps">${ruta}</div></td>
+  <td><span class="badge badge-${t.estado==='esperando'?'wait':t.estado==='llamando'?'noshow':t.estado==='en_atencion'?'active':'done'}">${t.estado.replace('_',' ')}</span></td>
+  <td>${['esperando','llamando'].includes(t.estado)?`<button class="btn btn-sm btn-blue" onclick="enviarOtroConsultorio('${t.id}')">Enviar</button>`:''}</td></tr>`}).join('')}</table>`;
+}
+
+async function enviarOtroConsultorio(tid){
+  const T=DB.g('turnos')||[],CS=DB.g('consultorios')||[];
+  const t=T.find(x=>x.id===tid); if(!t)return;
+  const jor=DB.jornadaTurno(t);
+  const opciones=CS.filter(c=>c.id!==t.consultorioId&&DB.cuposDisp(c.id,jor)>0)
+    .sort((a,b)=>a.num-b.num);
+  if(!opciones.length){alert('No hay otros consultorios con cupos disponibles para esta jornada.');return}
+  const lista=opciones.map(c=>`#${c.num} - ${c.especialidad} (${DB.cuposDisp(c.id,jor)} cupos)`).join('\n');
+  const num=prompt('Escribe el número del consultorio al que deseas enviar el turno:\n\n'+lista);
+  if(!num)return;
+  const dest=opciones.find(c=>String(c.num)===String(num).trim());
+  if(!dest){alert('Número de consultorio no válido.');return}
+  t.consultorioId=dest.id;
+  t.estado='esperando';
+  t.horaLlamado=null;
+  if(!Array.isArray(t.ruta))t.ruta=[];
+  let idx=t.ruta.indexOf(dest.id);
+  if(idx<0){t.ruta.splice((t.rutaIndex||0)+1,0,dest.id);idx=t.ruta.indexOf(dest.id);}
+  t.rutaIndex=idx;
+  DB.s('turnos',T);
+  if(window.REMOTE)await REMOTE.syncKey('turnos',[t]);
+  alert('Turno enviado a consultorio #'+dest.num+' — '+dest.especialidad);
+  render();
+}
+
+function filtT(){
+  const q=($('fT')||{}).value?.toLowerCase()||'',e=($('fE')||{}).value||'';
+  let T=DB.g('turnos')||[];const P=DB.g('pacientes')||[],CS=DB.g('consultorios')||[];
+  if(e)T=T.filter(t=>t.estado===e);
+  if(q)T=T.filter(t=>{const p=P.find(x=>x.id===t.pacienteId);return t.codigo.toLowerCase().includes(q)||(p&&p.nombre.toLowerCase().includes(q))});
+  $('tTbl').innerHTML=tblTurnos(T,P,CS);
+}
+// ===== MEDICO =====
+function renderMedico(){
+  const cons=(DB.g('consultorios')||[]).find(c=>c.id===CU.consultorio);
+  if(!cons){$('app').innerHTML='<div style="padding:40px;text-align:center"><h2>Sin consultorio asignado</h2><button class="btn btn-secondary" onclick="logout()">Salir</button></div>';return}
+  $('app').innerHTML=`<div class="app-container"><div class="sidebar">
+    <div class="sidebar-brand"><img src="${LOGO}" alt="IASD"><div class="brand-text"><h1>Mi Consultorio</h1><span>#${cons.num} · ${cons.especialidad}</span></div></div>
+    <div class="sidebar-nav"><div class="nav-section">Atención</div>
+    <div class="nav-item active"><span class="nav-icon">🩺</span>Pacientes</div></div>
+    <div class="sidebar-user"><div class="user-info"><div class="user-avatar">${CU.nombre[0]}</div>
+    <div><div class="user-name">${CU.nombre.split(' ').slice(0,2).join(' ')}</div><div class="user-role">${cons.especialidad}</div></div></div>
+    <button class="btn-logout" onclick="logout()">Cerrar Sesión</button></div></div>
+    <div class="main-content" id="pc"></div></div>`;
+  renderMedicoPage(cons);
+}
+function renderMedicoPage(cons){
+  const pc=$('pc'),T=(DB.g('turnos')||[]).filter(t=>t.consultorioId===cons.id);
+  const esp=T.filter(t=>t.estado==='esperando'),llam=T.find(t=>t.estado==='llamando'),act=T.find(t=>t.estado==='en_atencion');
+  const citasPend=(DB.g('citas')||[]).filter(c=>c.consultorioId===cons.id&&c.estado==='pendiente');
+  const aten=(DB.g('consultas')||[]).filter(c=>c.consultorioId===cons.id);
+  const cu=DB.cuposUsados(cons.id),cuT=cons.cuposMax+(cons.cuposExtra||0);
+  pc.innerHTML=`<div class="page-header"><h2>Consultorio #${cons.num} — ${cons.especialidad}</h2><p>Dr(a). ${cons.medico}</p></div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">En espera</div><div class="stat-value" style="color:var(--accent)">${esp.length}</div></div>
+    <div class="stat-card"><div class="stat-label">En atención</div><div class="stat-value" style="color:var(--blue)">${(llam?1:0)+(act?1:0)}</div></div>
+    <div class="stat-card"><div class="stat-label">Atendidos</div><div class="stat-value" style="color:var(--green)">${aten.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Cupos</div><div class="stat-value">${cu}<span style="font-size:14px;color:var(--text-muted)">/${cuT}</span></div>
+    ${cu>=cuT?'<button class="btn btn-sm btn-secondary" onclick="amplCupos()" style="margin-top:6px">+ Ampliar</button>':''}</div>
+  </div>
+  ${act?pacActual(act,cons):llam?pacLlamado(llam,cons):`<div class="card" style="text-align:center;padding:40px">
+    <p style="font-size:16px;margin-bottom:16px;color:var(--text-dim)">No hay paciente en atención</p>
+    ${esp.length?`<button class="btn btn-primary" onclick="llamar('${cons.id}')" style="font-size:16px;padding:14px 28px">🔔 Llamar siguiente</button>`:'<p style="color:var(--text-muted)">Sin pacientes en espera</p>'}</div>`}
+  <div class="card"><div class="card-title">📅 Citas pendientes por Registro/Triaje (${citasPend.length})</div>
+  ${citasPend.length?`<div class="table-wrap"><table><tr><th>Código</th><th>Paciente</th><th>Jornada</th><th>Hora</th><th>Bloque</th><th>Especialidad</th><th>Estado</th></tr>
+  ${citasPend.map(c=>{const p=(DB.g('pacientes')||[]).find(x=>x.id===c.pacienteId);
+  return`<tr><td><strong>${c.codigo}</strong></td><td>${p?p.nombre:'—'}</td><td>${getCitaJornada(c)||'—'}</td><td>${getCitaHora(c)||'—'}</td><td><span class="badge badge-cita">${c.bloque||'—'}</span></td><td>${c.especialidad||cons.especialidad}</td><td><span class="badge badge-wait">Debe pasar por Registro/Triaje</span></td></tr>`}).join('')}</table></div>`:'<p style="color:var(--text-muted);font-size:13px">Sin citas previas pendientes</p>'}</div>
+  <div class="card"><div class="card-title">👥 Cola de espera (${esp.length})</div>
+  ${esp.length?`<div class="table-wrap"><table><tr><th>#</th><th>Turno</th><th>Tipo</th><th>Paciente</th><th>Bloque</th></tr>
+  ${esp.map((t,i)=>{const p=(DB.g('pacientes')||[]).find(x=>x.id===t.pacienteId);
+  return`<tr><td>${i+1}</td><td><strong>${t.codigo}</strong></td><td><span class="badge ${t.citaId?'badge-cita':'badge-turno'}">${t.citaId?'Cita':'Libre'}</span></td>
+  <td>${p?p.nombre:'—'}</td><td>${t.bloque||'—'}</td></tr>`}).join('')}</table></div>`:'<p style="color:var(--text-muted);font-size:13px">Vacía</p>'}</div>`;
+}
+
+function pacLlamado(turno,cons){
+  const p=(DB.g('pacientes')||[]).find(x=>x.id===turno.pacienteId);if(!p)return'';
+  return `<div class="card" style="border-left:5px solid var(--red);background:var(--red-light)">
+    <div class="card-title">🔔 Paciente llamado — ${turno.codigo}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0">
+      <div><p><strong>Nombre:</strong> ${p.nombre}</p><p><strong>Documento:</strong> ${p.documento}</p></div>
+      <div><p><strong>Consultorio:</strong> #${cons.num} — ${cons.especialidad}</p><p><strong>Jornada:</strong> ${getCitaJornada(((DB.g('citas')||[]).find(c=>c.id===turno.citaId)||{}))||turno.jornada||'Turno libre'}</p><p><strong>Hora cita:</strong> ${turno.horaCita||getCitaHora(((DB.g('citas')||[]).find(c=>c.id===turno.citaId)||{}))||'—'}</p><p><strong>Estado:</strong> Esperando confirmación de llegada</p></div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-success" onclick="iniciarAtencion('${turno.id}','${cons.id}')">✅ Ya llegó / Empezar consulta</button>
+      <button class="btn btn-primary" onclick="rellamar('${turno.id}')">🔔 Volver a llamar</button>
+      <button class="btn btn-secondary" onclick="volverEspera('${turno.id}')">↩️ Volver a espera</button>
+      <button class="btn btn-blue" onclick="pasarSiguiente('${turno.id}','${cons.id}')">➡️ Pasar al siguiente</button>
+      <button class="btn btn-danger" onclick="noLlego('${turno.id}')">❌ No llegó</button>
+    </div>
+  </div>`;
+}
+async function iniciarAtencion(tid,cid){
+  const T=DB.g('turnos')||[],t=T.find(x=>x.id===tid);if(!t)return;
+  t.estado='en_atencion';t.horaInicio=new Date().toISOString();DB.s('turnos',T);if(window.REMOTE)await REMOTE.syncKey('turnos',[t]);tempMeds=[];render();
+}
+async function rellamar(tid){
+  const T=DB.g('turnos')||[],t=T.find(x=>x.id===tid);if(!t)return;
+  t.estado='llamando';t.horaLlamado=new Date().toISOString();DB.s('turnos',T);if(window.REMOTE)await REMOTE.syncKey('turnos',[t]);playBell();render();
+}
+async function volverEspera(tid){
+  const T=DB.g('turnos')||[],t=T.find(x=>x.id===tid);if(!t)return;
+  t.estado='esperando';t.horaLlamado=null;DB.s('turnos',T);if(window.REMOTE)await REMOTE.syncKey('turnos',[t]);render();
+}
+
+async function pasarSiguiente(tid,cid){
+  const T=DB.g('turnos')||[],t=T.find(x=>x.id===tid);if(!t)return;
+  // Lo dejamos en espera, pero al final de la cola, para llamar al siguiente sin perder este turno.
+  t.estado='esperando';t.horaLlamado=null;t.pospuestoEn=new Date().toISOString();
+  DB.s('turnos',T);if(window.REMOTE)await REMOTE.syncKey('turnos',[t]);
+  setTimeout(()=>llamar(cid,tid),250);
+}
+async function noLlego(tid){
+  if(!confirm('¿Confirmar que el paciente no llegó? Se cancelará toda la ruta pendiente de este turno.'))return;
+  const T=DB.g('turnos')||[],t=T.find(x=>x.id===tid);if(!t)return;
+  const relacionados=T.filter(x=>x.codigo===t.codigo&&x.pacienteId===t.pacienteId&&x.estado!=='atendido');
+  relacionados.forEach(x=>{x.estado='cancelado';x.horaLlamado=null;x.horaCancelado=new Date().toISOString();});
+  DB.s('turnos',T);if(window.REMOTE)await REMOTE.syncKey('turnos',relacionados);
+  render();
+}
+
+
+function pacActual(turno,cons){
+  const p=(DB.g('pacientes')||[]).find(x=>x.id===turno.pacienteId);if(!p)return'';
+  const CS=DB.g('consultorios')||[];
+  const ruta=(turno.ruta||[]).map((cid,i)=>{const cc=CS.find(x=>x.id===cid);
+  const cls=i<turno.rutaIndex?'completed':i===turno.rutaIndex?'current':'pending';
+  return`<span class="route-step ${cls}">${cc?cc.especialidad:''}</span>`}).join('<span class="route-arrow">→</span>');
+  return`<div class="card" style="border-left:4px solid var(--blue)">
+  <div class="card-title">🩺 Paciente — ${turno.codigo}</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div><p><strong>Nombre:</strong> ${p.nombre}</p><p><strong>Doc:</strong> ${p.tipoDoc} ${p.documento}</p><p><strong>Edad:</strong> ${p.edad} · <strong>Sexo:</strong> ${p.sexo==='M'?'Masc':'Fem'}</p><p><strong>Tel:</strong> ${p.telefono||'—'}</p></div>
+    <div><p><strong>Dirección:</strong> ${p.direccion||'—'}</p><p><strong>Estado civil:</strong> ${p.estadoCivil}</p><p><strong>Miembro:</strong> ${p.miembro==='si'?'Sí':'No'}</p><p><strong>Iglesia:</strong> ${p.iglesia||'—'}</p><p><strong>Jornada:</strong> ${getCitaJornada(((DB.g('citas')||[]).find(c=>c.id===turno.citaId)||{}))||turno.jornada||'Turno libre'}</p><p><strong>Hora cita:</strong> ${turno.horaCita||getCitaHora(((DB.g('citas')||[]).find(c=>c.id===turno.citaId)||{}))||'—'}</p></div>
+  </div>
+  <div style="margin-bottom:12px"><strong>Ruta:</strong><div class="route-steps" style="margin-top:4px">${ruta}</div></div>
+  <div style="margin-bottom:12px;padding:10px;border-radius:8px;background:var(--green-light);font-size:13px"><strong>Triaje:</strong> Presión: ${p.presion||'—'} · Peso: ${p.peso||'—'} · Altura: ${p.altura||'—'}</div>
+  <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px">
+    <h4 style="font-size:14px;margin-bottom:10px">📝 Consulta</h4>
+    <div class="form-grid">
+      <div class="form-group"><label>Motivo</label><textarea id="cMot" rows="2" style="width:100%"></textarea></div>
+      <div class="form-group"><label>Diagnóstico</label><textarea id="cDiag" rows="2" style="width:100%"></textarea></div>
+      <div class="form-group" style="grid-column:1/-1"><label>Tratamiento</label><textarea id="cTrat" rows="2" style="width:100%"></textarea></div>
+    </div></div>
+  <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px">
+    <h4 style="font-size:14px;margin-bottom:10px">💊 Fórmula médica</h4>
+    <div id="medL"></div>
+    <div class="form-grid" style="margin-top:8px">
+      <div class="form-group"><label>Medicamento</label><input id="mN"></div>
+      <div class="form-group"><label>Dosis</label><input id="mD" placeholder="500mg"></div>
+      <div class="form-group"><label>Frecuencia</label><input id="mF" placeholder="Cada 8h"></div>
+      <div class="form-group"><label>Duración</label><input id="mDu" placeholder="7 días"></div>
+    </div>
+    <button class="btn btn-sm btn-secondary" onclick="addMed()" style="margin-top:8px">+ Agregar</button>
+  </div>
+  <div class="btn-group" style="margin-top:20px">
+    <button class="btn btn-success" onclick="finCon('${turno.id}','${cons.id}')">✓ Finalizar consulta</button>
+    <button class="btn btn-blue" onclick="printForm('${turno.id}','${cons.id}')">🖨️ Imprimir fórmula</button>
+    ${(DB.g('turnos')||[]).filter(t=>t.consultorioId===cons.id&&t.estado==='esperando').length?`<button class="btn btn-primary" onclick="finYLlamar('${turno.id}','${cons.id}')">✓ Finalizar y llamar siguiente</button>`:''}</div></div>`;
+}
+function addMed(){const n=$('mN').value.trim();if(!n)return;tempMeds.push({nombre:n,dosis:$('mD').value.trim(),frecuencia:$('mF').value.trim(),duracion:$('mDu').value.trim()});
+  $('mN').value='';$('mD').value='';$('mF').value='';$('mDu').value='';renderML()}
+function renderML(){const el=$('medL');if(!el)return;if(!tempMeds.length){el.innerHTML='';return}
+  el.innerHTML=tempMeds.map((m,i)=>`<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--bg-surface);border-radius:6px;margin:4px 0;font-size:13px">
+  <span><strong>${m.nombre}</strong> — ${m.dosis} · ${m.frecuencia} · ${m.duracion}</span>
+  <button onclick="tempMeds.splice(${i},1);renderML()" style="border:none;background:none;color:var(--red);cursor:pointer">✕</button></div>`).join('')}
+async function llamar(cid, excluirId=null){
+  const T=DB.g('turnos')||[];
+  if(T.find(t=>t.consultorioId===cid&&['llamando','en_atencion'].includes(t.estado))){alert('Ya hay un paciente llamado o en atención. Confirme llegada, páselo a espera o finalice antes de llamar otro.');return}
+  const P=DB.g('pacientes')||[];
+  const esp=T.filter(t=>{
+      if(!(t.consultorioId===cid&&t.estado==='esperando'&&t.id!==excluirId))return false;
+      if(!t.citaId)return true;
+      const p=P.find(x=>x.id===t.pacienteId);
+      return !!(p&&p.triajeRealizado);
+    })
+    .sort((a,b)=>new Date(a.pospuestoEn||a.fecha)-new Date(b.pospuestoEn||b.fecha));
+  if(!esp.length){alert(excluirId?'No hay otro paciente en espera. El paciente quedó nuevamente en cola.':'No hay pacientes disponibles. Si hay citas pendientes, deben pasar primero por Registro/Triaje.');return}
+  const citas=esp.filter(t=>t.citaId),next=citas.length?citas[0]:esp[0];
+  next.estado='llamando';next.horaLlamado=new Date().toISOString();DB.s('turnos',T);
+  if(window.REMOTE)await REMOTE.syncKey('turnos',[next]);
+  playBell();tempMeds=[];render();
+}
+function finCon(tid,cid,silent=false){
+  const T=DB.g('turnos')||[],t=T.find(x=>x.id===tid);if(!t)return;
+  const CO=DB.g('consultas')||[];
+  CO.push({id:'co_'+Date.now(),turnoId:tid,pacienteId:t.pacienteId,consultorioId:cid,
+    motivo:($('cMot')||{}).value||'',diagnostico:($('cDiag')||{}).value||'',tratamiento:($('cTrat')||{}).value||'',
+    medicamentos:[...tempMeds, ...( (($('mN')&&$('mN').value.trim()) ? [{nombre:$('mN').value.trim(),dosis:($('mD')||{}).value||'',frecuencia:($('mF')||{}).value||'',duracion:($('mDu')||{}).value||''}] : []) )],fecha:new Date().toISOString()});
+  DB.s('consultas',CO);t.estado='atendido';t.horaFin=new Date().toISOString();
+  if(t.ruta&&t.rutaIndex<t.ruta.length-1){
+    const ni=t.rutaIndex+1;
+    T.push({id:'t_'+Date.now(),codigo:t.codigo,pacienteId:t.pacienteId,consultorioId:t.ruta[ni],estado:'esperando',
+      bloque:t.bloque,jornada:t.jornada||DB.jornadaTurno(t),horaCita:t.horaCita||'',ruta:t.ruta,rutaIndex:ni,citaId:t.citaId,fecha:new Date().toISOString()});
+  }
+  DB.s('turnos',T);tempMeds=[];
+  if(!silent)alert('✅ Consulta finalizada'+(t.ruta&&t.rutaIndex<t.ruta.length-1?'\nEl paciente pasó al siguiente consultorio.':'\nRuta finalizada.'));
+  render();
+}
+function finYLlamar(tid,cid){finCon(tid,cid,true);setTimeout(()=>llamar(cid),150)}
+function printForm(tid,cid){
+  const t=(DB.g('turnos')||[]).find(x=>x.id===tid);if(!t)return;
+  const p=(DB.g('pacientes')||[]).find(x=>x.id===t.pacienteId),cons=(DB.g('consultorios')||[]).find(x=>x.id===cid),cfg=DB.g('config');
+  const mot=($('cMot')||{}).value||'',diag=($('cDiag')||{}).value||'',trat=($('cTrat')||{}).value||'';
+  const medActual=($('mN')&&$('mN').value.trim())?{nombre:$('mN').value.trim(),dosis:($('mD')||{}).value||'',frecuencia:($('mF')||{}).value||'',duracion:($('mDu')||{}).value||''}:null;
+  const medsAll=medActual?[...tempMeds,medActual]:[...tempMeds];
+  const h=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Fórmula</title>
+  <style>body{font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px}
+  .hd{display:flex;justify-content:space-between;border-bottom:3px solid #e8973e;padding-bottom:10px;margin-bottom:16px}
+  .hd h2{color:#e8973e;margin:0;font-size:18px}.hd p{margin:2px 0;font-size:11px;color:#666}
+  .sec{margin:12px 0}.sec h4{font-size:13px;color:#e8973e;margin:0 0 6px;border-bottom:1px solid #eee;padding-bottom:4px}
+  .info{font-size:13px;line-height:1.8}
+  table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}th{text-align:left;padding:6px 8px;background:#f8f6f1;border:1px solid #ddd}td{padding:6px 8px;border:1px solid #ddd}
+  .ft{margin-top:40px;text-align:right}.firma{text-align:center;border-top:1px solid #333;padding-top:4px;display:inline-block;min-width:200px}
+  .jn{text-align:center;font-size:10px;color:#999;margin-top:20px;border-top:1px solid #eee;padding-top:8px}</style></head><body>
+  <div class="hd"><div><h2>${cfg.nombre}</h2><p>${cfg.ubicacion}</p><p>Fecha: ${new Date().toLocaleDateString('es-CO')}</p></div>
+  <div style="text-align:right"><p><strong>FÓRMULA MÉDICA</strong></p><p>${cons.especialidad}</p></div></div>
+  <div class="sec"><h4>Paciente</h4><div class="info"><strong>Nombre:</strong> ${p?p.nombre:'—'} · <strong>Doc:</strong> ${p?p.documento:'—'} · <strong>Edad:</strong> ${p?p.edad:''} años<br><strong>Ciudad:</strong> Cúcuta · <strong>Distrito/Jornada:</strong> ${(turno=>turno?(turno.jornada||getCitaJornada((DB.g('citas')||[]).find(c=>c.id===turno.citaId)||{})):'') (t)||'—'}<br><strong>Triaje:</strong> Presión ${p?p.presion||'—':'—'} · Peso ${p?p.peso||'—':'—'} · Altura ${p?p.altura||'—':'—'}</div></div>
+  ${mot?'<div class="sec"><h4>Motivo</h4><p style="font-size:13px">'+mot+'</p></div>':''}
+  ${diag?'<div class="sec"><h4>Diagnóstico</h4><p style="font-size:13px">'+diag+'</p></div>':''}
+  ${trat?'<div class="sec"><h4>Tratamiento</h4><p style="font-size:13px">'+trat+'</p></div>':''}
+  ${medsAll.length?'<div class="sec"><h4>Fórmula médica / Medicamentos</h4><table><tr><th>Medicamento</th><th>Dosis</th><th>Frecuencia</th><th>Duración</th></tr>'+medsAll.map(m=>'<tr><td>'+m.nombre+'</td><td>'+m.dosis+'</td><td>'+m.frecuencia+'</td><td>'+m.duracion+'</td></tr>').join('')+'</table></div>':''}
+  <div class="jn">${cfg.nombre} — ${cfg.ubicacion}<br>Iglesia Adventista del Séptimo Día</div></body></html>`;
+  const w=window.open('','_blank');w.document.write(h);w.document.close();setTimeout(()=>w.print(),500);
+}
+function amplCupos(){const e=prompt('¿Cuántos cupos adicionales?');if(!e||isNaN(e))return;
+  const CS=DB.g('consultorios')||[],c=CS.find(x=>x.id===CU.consultorio);if(c){c.cuposExtra=(c.cuposExtra||0)+parseInt(e);DB.s('consultorios',CS);render()}}
+// ===== ADMIN: CONSULTORIOS =====
+function pgCons(el){
+  const CS=DB.g('consultorios')||[];
+  el.innerHTML=`<div class="page-header"><h2>Consultorios</h2><p>Administrar consultorios y cupos</p></div>
+  <div class="btn-group" style="margin-bottom:16px"><button class="btn btn-primary" onclick="modalCons()">+ Nuevo</button></div>
+  <div class="card"><div class="table-wrap"><table>
+  <tr><th>#</th><th>Médico</th><th>Especialidad</th><th>Cupos</th><th>Usados</th><th>Reg. Prof.</th><th></th></tr>
+  ${CS.map(c=>`<tr><td><strong>${c.num}</strong></td><td>${c.medico}</td><td>${c.especialidad}</td>
+  <td>${c.cuposMax}${c.cuposExtra?'+'+c.cuposExtra:''}</td><td>${DB.cuposUsados(c.id)}</td><td>${c.regProf||'—'}</td>
+  <td><button class="btn btn-sm btn-secondary" onclick="editCons('${c.id}')">Editar</button>
+  <button class="btn btn-sm btn-secondary" onclick="addCuA('${c.id}')">+Cupos</button></td></tr>`).join('')}
+  </table></div></div>`;
+  setTimeout(actualizarHorasCitas,0);
+}
+function modalCons(c){
+  const e=!!c;document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay" onclick="if(event.target===this)this.remove()"><div class="modal">
+  <div class="modal-title">${e?'Editar':'Nuevo'} Consultorio</div><div class="form-grid">
+  <div class="form-group"><label>Nº</label><input type="number" id="mcN" value="${c?c.num:''}"></div>
+  <div class="form-group"><label>Médico</label><input id="mcM" value="${c?c.medico:''}"></div>
+  <div class="form-group"><label>Especialidad</label><input id="mcE" value="${c?c.especialidad:''}"></div>
+  <div class="form-group"><label>Cupos/día</label><input type="number" id="mcC" value="${c?c.cuposMax:'15'}"></div>
+  <div class="form-group"><label>Reg. Profesional</label><input id="mcR" value="${c?c.regProf||'':''}"></div>
+  </div><div class="btn-group"><button class="btn btn-primary" onclick="saveCons('${c?c.id:''}')">${e?'Guardar':'Crear'}</button>
+  <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button></div></div></div>`);
+}
+function saveCons(id){
+  const CS=DB.g('consultorios')||[],d={num:+$('mcN').value,medico:$('mcM').value.trim(),especialidad:$('mcE').value.trim(),
+    cuposMax:+$('mcC').value||15,regProf:$('mcR').value.trim()};
+  if(id){const c=CS.find(x=>x.id===id);if(c)Object.assign(c,d)}
+  else{d.id='c_'+Date.now();d.cuposExtra=0;CS.push(d)}
+  DB.s('consultorios',CS);document.querySelector('.modal-overlay')?.remove();render();
+}
+function editCons(id){const c=(DB.g('consultorios')||[]).find(x=>x.id===id);if(c)modalCons(c)}
+function addCuA(id){const e=prompt('Cupos adicionales:');if(!e||isNaN(e))return;
+  const CS=DB.g('consultorios')||[],c=CS.find(x=>x.id===id);if(c){c.cuposExtra=(c.cuposExtra||0)+parseInt(e);DB.s('consultorios',CS);render()}}
+
+// ===== ADMIN: USUARIOS =====
+function pgUsers(el){
+  const U=DB.g('users')||[];
+  el.innerHTML=`<div class="page-header"><h2>Usuarios</h2><p>Administrar accesos</p></div>
+  <div class="btn-group" style="margin-bottom:16px"><button class="btn btn-primary" onclick="modalUser()">+ Nuevo</button></div>
+  <div class="card"><div class="table-wrap"><table>
+  <tr><th>Nombre</th><th>Usuario</th><th>Contraseña</th><th>Rol</th><th>Consultorio</th><th></th></tr>
+  ${U.map(u=>{const c=u.consultorio?(DB.g('consultorios')||[]).find(x=>x.id===u.consultorio):null;
+  return`<tr><td><strong>${u.nombre}</strong></td><td><code>${u.usuario}</code></td><td><code>${u.password}</code></td>
+  <td><span class="badge ${u.rol==='admin'?'badge-noshow':u.rol==='medico'?'badge-active':'badge-done'}">${u.rol}</span></td>
+  <td>${c?'#'+c.num+' '+c.especialidad:'—'}</td>
+  <td><button class="btn btn-sm btn-secondary" onclick="editUser('${u.id}')">Editar</button></td></tr>`}).join('')}
+  </table></div></div>`;
+  setTimeout(actualizarHorasCitas,0);
+}
+function modalUser(u){
+  const e=!!u,CS=DB.g('consultorios')||[];
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay" onclick="if(event.target===this)this.remove()"><div class="modal">
+  <div class="modal-title">${e?'Editar':'Nuevo'} Usuario</div><div class="form-grid">
+  <div class="form-group"><label>Nombre</label><input id="muN" value="${u?u.nombre:''}"></div>
+  <div class="form-group"><label>Usuario</label><input id="muU" value="${u?u.usuario:''}"></div>
+  <div class="form-group"><label>Contraseña</label><input id="muP" value="${u?u.password:''}"></div>
+  <div class="form-group"><label>Rol</label><select id="muR"><option value="admin" ${u&&u.rol==='admin'?'selected':''}>Admin</option><option value="registro" ${u&&u.rol==='registro'?'selected':''}>Registro</option><option value="medico" ${u&&u.rol==='medico'?'selected':''}>Médico</option><option value="citas" ${u&&u.rol==='citas'?'selected':''}>Citas</option></select></div>
+  <div class="form-group"><label>Consultorio</label><select id="muC"><option value="">Ninguno</option>${CS.map(c=>`<option value="${c.id}" ${u&&u.consultorio===c.id?'selected':''}>#${c.num} ${c.medico.split(' ').slice(0,2).join(' ')}</option>`).join('')}</select></div>
+  <div class="form-group"><label>Especialidad</label><input id="muE" value="${u?u.especialidad||'':''}"></div>
+  <div class="form-group"><label>Reg. Profesional</label><input id="muRg" value="${u?u.registro||'':''}"></div>
+  </div><div class="btn-group"><button class="btn btn-primary" onclick="saveUser('${u?u.id:''}')">${e?'Guardar':'Crear'}</button>
+  <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button></div></div></div>`);
+}
+function saveUser(id){
+  const U=DB.g('users')||[],d={nombre:$('muN').value.trim(),usuario:$('muU').value.trim(),password:$('muP').value.trim(),
+    rol:$('muR').value,consultorio:$('muC').value||null,especialidad:$('muE').value.trim(),registro:$('muRg').value.trim()};
+  if(id){const u=U.find(x=>x.id===id);if(u)Object.assign(u,d)}else{d.id='u_'+Date.now();U.push(d)}
+  DB.s('users',U);document.querySelector('.modal-overlay')?.remove();render();
+}
+function editUser(id){const u=(DB.g('users')||[]).find(x=>x.id===id);if(u)modalUser(u)}
+
+// ===== CONFIG =====
+function pgConfig(el){
+  const cfg=DB.g('config');
+  el.innerHTML=`<div class="page-header"><h2>Configuración</h2><p>Datos de la jornada</p></div>
+  <div class="card"><div class="card-title">⚙️ Datos del evento</div><div class="form-grid">
+  <div class="form-group"><label>Nombre del evento</label><input id="cfN" value="${cfg.nombre}"></div>
+  <div class="form-group"><label>Fecha</label><input type="date" id="cfF" value="${cfg.fecha}"></div>
+  <div class="form-group"><label>Ubicación</label><input id="cfU" value="${cfg.ubicacion}"></div>
+  </div><div class="btn-group"><button class="btn btn-primary" onclick="saveCfg()">Guardar</button>
+  <button class="btn btn-danger" onclick="if(confirm('¿Reiniciar TODO? Se perderán todos los datos.'))resetAll()">🗑️ Reiniciar sistema</button></div></div>
+  <div class="card"><div class="card-title">🔑 Credenciales por defecto</div>
+  <div class="table-wrap"><table><tr><th>Rol</th><th>Usuario</th><th>Contraseña</th></tr>
+  <tr><td>Admin</td><td><code>admin</code></td><td><code>admin123</code></td></tr>
+  <tr><td>Registro principal</td><td><code>registro</code></td><td><code>registro123</code></td></tr>
+  <tr><td>Registro 1</td><td><code>registro1</code></td><td><code>registro123</code></td></tr>
+  <tr><td>Registro 2</td><td><code>registro2</code></td><td><code>registro123</code></td></tr>
+  <tr><td>Registro 3</td><td><code>registro3</code></td><td><code>registro123</code></td></tr>
+  <tr><td>Registro 4</td><td><code>registro4</code></td><td><code>registro123</code></td></tr>
+  <tr><td>Citas</td><td><code>citas</code></td><td><code>citas123</code></td></tr>
+  <tr><td>Médicos</td><td><code>[nombre][#]</code></td><td><code>1234</code></td></tr>
+  </table></div></div>`;
+  setTimeout(actualizarHorasCitas,0);
+}
+function saveCfg(){const cfg=DB.g('config');cfg.nombre=$('cfN').value.trim();cfg.fecha=$('cfF').value;cfg.ubicacion=$('cfU').value.trim();DB.s('config',cfg);alert('✅ Guardado');render()}
+function resetAll(){Object.keys(localStorage).filter(k=>k.startsWith('js_')).forEach(k=>localStorage.removeItem(k));DB.init();location.reload()}
+
+// ===== REPORTES =====
+function pgReportes(el){
+  const P=DB.g('pacientes')||[],T=DB.g('turnos')||[],CO=DB.g('consultas')||[],CS=DB.g('consultorios')||[],CI=DB.g('citas')||[];
+  const max=Math.max(...CS.map(c=>CO.filter(x=>x.consultorioId===c.id).length),1);
+  const gM=P.filter(p=>p.sexo==='M').length,gF=P.filter(p=>p.sexo==='F').length;
+  const miSi=P.filter(p=>p.miembro==='si').length;
+  const citasA=CI.filter(c=>c.estado==='activada').length,citasP=CI.filter(c=>c.estado==='pendiente').length;
+  el.innerHTML=`<div class="page-header"><h2>Reportes</h2><p>Estadísticas de la jornada</p></div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total pacientes</div><div class="stat-value">${P.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Consultas</div><div class="stat-value" style="color:var(--green)">${CO.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Citas activadas</div><div class="stat-value" style="color:var(--purple)">${citasA}</div></div>
+    <div class="stat-card"><div class="stat-label">Miembros IASD</div><div class="stat-value">${miSi}<span style="font-size:14px;color:var(--text-muted)">/${P.length}</span></div></div>
+  </div>
+  <div class="card"><div class="card-title">📊 Atenciones por consultorio</div>
+  ${CS.map(c=>{const n=CO.filter(x=>x.consultorioId===c.id).length;const pct=max?Math.round(n/max*100):0;
+  return`<div class="chart-bar-row"><div class="chart-bar-label">${c.especialidad.substring(0,15)} #${c.num}</div>
+  <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%;background:var(--accent)">${n}</div></div></div>`}).join('')}
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="card"><div class="card-title">👥 Género</div>
+      <div class="chart-bar-row"><div class="chart-bar-label">Masculino</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${P.length?Math.round(gM/P.length*100):0}%;background:var(--blue)">${gM}</div></div></div>
+      <div class="chart-bar-row"><div class="chart-bar-label">Femenino</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${P.length?Math.round(gF/P.length*100):0}%;background:var(--purple)">${gF}</div></div></div>
+    </div>
+    <div class="card"><div class="card-title">⛪ Membresía</div>
+      <div class="chart-bar-row"><div class="chart-bar-label">Miembros</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${P.length?Math.round(miSi/P.length*100):0}%;background:var(--green)">${miSi}</div></div></div>
+      <div class="chart-bar-row"><div class="chart-bar-label">Externos</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${P.length?Math.round((P.length-miSi)/P.length*100):0}%;background:var(--accent)">${P.length-miSi}</div></div></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-title">🏆 Ranking especialidades</div><div class="table-wrap"><table>
+  <tr><th>#</th><th>Especialidad</th><th>Atenciones</th><th>En espera</th></tr>
+  ${Object.entries(DB.getEsp()).sort((a,b)=>{const ca=CO.filter(x=>a[1].cons.some(c=>c.id===x.consultorioId)).length;const cb=CO.filter(x=>b[1].cons.some(c=>c.id===x.consultorioId)).length;return cb-ca})
+  .map(([e,d],i)=>{const at=CO.filter(x=>d.cons.some(c=>c.id===x.consultorioId)).length;const es=T.filter(t=>d.cons.some(c=>c.id===t.consultorioId)&&t.estado==='esperando').length;
+  return`<tr><td>${i+1}</td><td><strong>${e}</strong></td><td><span class="badge badge-done">${at}</span></td><td><span class="badge badge-wait">${es}</span></td></tr>`}).join('')}
+  </table></div></div>`;
+  setTimeout(actualizarHorasCitas,0);
+}
+
+// ===== EXPORTAR PDF =====
+function pgExportar(el){
+  el.innerHTML=`<div class="page-header"><h2>Exportar PDF</h2><p>Generar reportes imprimibles</p></div>
+  <div class="card"><div class="card-title">📄 Reportes disponibles</div>
+  <div class="btn-group" style="flex-direction:column;gap:12px">
+    <button class="btn btn-primary" onclick="exportGeneral()" style="justify-content:flex-start">📊 Reporte general de la jornada</button>
+    <button class="btn btn-blue" onclick="exportPacientes()" style="justify-content:flex-start">📋 Listado completo de pacientes</button>
+    <button class="btn btn-success" onclick="exportConsultorios()" style="justify-content:flex-start">🏥 Reporte por consultorio</button>
+  </div></div>`;
+}
+function exportGeneral(){
+  const P=DB.g('pacientes')||[],CO=DB.g('consultas')||[],CS=DB.g('consultorios')||[],CI=DB.g('citas')||[],cfg=DB.g('config');
+  const h=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reporte General</title>
+  <style>body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:20px;font-size:13px}
+  h1{color:#e8973e;font-size:20px;border-bottom:2px solid #e8973e;padding-bottom:8px}h2{font-size:16px;margin:16px 0 8px;color:#1a2340}
+  table{width:100%;border-collapse:collapse;margin:8px 0}th,td{padding:6px 8px;border:1px solid #ddd;font-size:12px}th{background:#f8f6f1;text-align:left}
+  .stats{display:flex;gap:16px;margin:12px 0}.stat{flex:1;text-align:center;padding:12px;background:#f8f6f1;border-radius:8px}.stat .n{font-size:24px;font-weight:bold;color:#e8973e}.stat .l{font-size:11px;color:#666}
+  </style></head><body>
+  <h1>${cfg.nombre} — Reporte General</h1><p>${cfg.ubicacion} · ${cfg.fecha}</p>
+  <div class="stats"><div class="stat"><div class="n">${P.length}</div><div class="l">Pacientes</div></div>
+  <div class="stat"><div class="n">${CO.length}</div><div class="l">Consultas</div></div>
+  <div class="stat"><div class="n">${CI.length}</div><div class="l">Citas previas</div></div></div>
+  <h2>Atenciones por consultorio</h2><table><tr><th>#</th><th>Especialidad</th><th>Médico</th><th>Atenciones</th><th>Cupos usados</th></tr>
+  ${CS.map(c=>'<tr><td>'+c.num+'</td><td>'+c.especialidad+'</td><td>'+c.medico+'</td><td>'+CO.filter(x=>x.consultorioId===c.id).length+'</td><td>'+DB.cuposUsados(c.id)+'/'+(c.cuposMax+(c.cuposExtra||0))+'</td></tr>').join('')}</table>
+  <h2>Demografía</h2><table><tr><th>Indicador</th><th>Valor</th></tr>
+  <tr><td>Masculino</td><td>${P.filter(p=>p.sexo==='M').length}</td></tr><tr><td>Femenino</td><td>${P.filter(p=>p.sexo==='F').length}</td></tr>
+  <tr><td>Miembros IASD</td><td>${P.filter(p=>p.miembro==='si').length}</td></tr><tr><td>Externos</td><td>${P.filter(p=>p.miembro!=='si').length}</td></tr></table>
+  </body></html>`;
+  const w=window.open('','_blank');w.document.write(h);w.document.close();setTimeout(()=>w.print(),500);
+}
+function exportPacientes(){
+  const P=DB.g('pacientes')||[],T=DB.g('turnos')||[],CS=DB.g('consultorios')||[],cfg=DB.g('config');
+  const h=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Pacientes</title>
+  <style>body{font-family:Arial,sans-serif;max-width:900px;margin:0 auto;padding:20px;font-size:12px}
+  h1{color:#e8973e;font-size:18px;border-bottom:2px solid #e8973e;padding-bottom:8px}
+  table{width:100%;border-collapse:collapse;margin:8px 0}th,td{padding:5px 6px;border:1px solid #ddd;font-size:11px}th{background:#f8f6f1}</style></head><body>
+  <h1>${cfg.nombre} — Listado de Pacientes</h1><p>${cfg.ubicacion} · ${cfg.fecha} · Total: ${P.length}</p>
+  <table><tr><th>#</th><th>Documento</th><th>Nombre</th><th>Edad</th><th>Sexo</th><th>Teléfono</th><th>Iglesia</th><th>Turnos</th></tr>
+  ${P.map((p,i)=>{const ts=T.filter(t=>t.pacienteId===p.id).map(t=>{const c=CS.find(x=>x.id===t.consultorioId);return t.codigo+(c?' ('+c.especialidad.substring(0,10)+')':'')}).join(', ');
+  return'<tr><td>'+(i+1)+'</td><td>'+p.documento+'</td><td>'+p.nombre+'</td><td>'+p.edad+'</td><td>'+p.sexo+'</td><td>'+(p.telefono||'')+'</td><td>'+(p.iglesia||'')+'</td><td>'+ts+'</td></tr>'}).join('')}
+  </table></body></html>`;
+  const w=window.open('','_blank');w.document.write(h);w.document.close();setTimeout(()=>w.print(),500);
+}
+function exportConsultorios(){
+  const CS=DB.g('consultorios')||[],CO=DB.g('consultas')||[],P=DB.g('pacientes')||[],cfg=DB.g('config');
+  const h=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Consultorios</title>
+  <style>body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:20px;font-size:12px}
+  h1{color:#e8973e;font-size:18px;border-bottom:2px solid #e8973e;padding-bottom:8px}h2{font-size:14px;margin:16px 0 8px;color:#1a2340}
+  table{width:100%;border-collapse:collapse;margin:8px 0}th,td{padding:5px 6px;border:1px solid #ddd;font-size:11px}th{background:#f8f6f1}
+  .page-break{page-break-before:always}</style></head><body>
+  <h1>${cfg.nombre} — Reporte por Consultorio</h1><p>${cfg.ubicacion} · ${cfg.fecha}</p>
+  ${CS.map((c,i)=>{const cons=CO.filter(x=>x.consultorioId===c.id);
+  return`${i>0?'<div class="page-break"></div>':''}<h2>#${c.num} — ${c.especialidad} · Dr(a). ${c.medico}</h2>
+  <p>Atenciones: ${cons.length} · Cupos: ${DB.cuposUsados(c.id)}/${c.cuposMax+(c.cuposExtra||0)}</p>
+  <table><tr><th>#</th><th>Paciente</th><th>Diagnóstico</th><th>Tratamiento</th></tr>
+  ${cons.map((co,j)=>{const p=P.find(x=>x.id===co.pacienteId);
+  return'<tr><td>'+(j+1)+'</td><td>'+(p?p.nombre:'—')+'</td><td>'+(co.diagnostico||'—')+'</td><td>'+(co.tratamiento||'—')+'</td></tr>'}).join('')}</table>`}).join('')}
+  </body></html>`;
+  const w=window.open('','_blank');w.document.write(h);w.document.close();setTimeout(()=>w.print(),500);
+}
+
+// ===== TV SCREEN =====
+function renderTV(){
+  const CS=DB.g('consultorios')||[],T=DB.g('turnos')||[],P=DB.g('pacientes')||[],cfg=DB.g('config');
+  const clock=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+  // Flujo correcto: llamando aparece rojo en TV; en_atencion aparece como atención normal
+  const active=CS.map(c=>{
+    const llam=T.find(t=>t.consultorioId===c.id&&t.estado==='llamando');
+    const enAt=T.find(t=>t.consultorioId===c.id&&t.estado==='en_atencion');
+    const esp=T.filter(t=>t.consultorioId===c.id&&t.estado==='esperando');
+    const turnoActual=llam||enAt;
+    const pac=turnoActual?P.find(x=>x.id===turnoActual.pacienteId):null;
+    return{c,llam,enAt,esp,pac};
+  });
+  const callingCards=active.filter(a=>a.llam);
+  const atendiendo=active.filter(a=>!a.llam&&a.enAt);
+  const conEspera=active.filter(a=>!a.llam&&!a.enAt&&a.esp.length>0);
+  const libres=active.filter(a=>!a.llam&&!a.enAt&&a.esp.length===0);
+
+  // Build calling section (big cards)
+  const callingHTML=callingCards.length?`
+    <div style="margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <span style="font-size:28px">🔔</span>
+        <h2 style="font-family:'Playfair Display',serif;font-size:28px;color:var(--red);margin:0">PASAR A CONSULTORIO</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px">
+        ${callingCards.map(a=>`
+          <div style="background:rgba(217,67,67,.12);border:2px solid var(--red);border-radius:16px;padding:28px;animation:callPulse 2s infinite">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div style="font-size:14px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:2px">#${a.c.num} · ${a.c.especialidad}</div>
+                <div style="font-family:'Playfair Display',serif;font-size:72px;font-weight:800;color:var(--red);line-height:1;margin:8px 0">${a.llam.codigo}</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:13px;color:rgba(255,255,255,.4)">Dr(a).</div>
+                <div style="font-size:16px;font-weight:500">${a.c.medico.split(' ').slice(0,2).join(' ')}</div>
+              </div>
+            </div>
+            <div style="font-size:26px;font-weight:600;margin-top:4px">${a.pac?a.pac.nombre:'—'}</div>
+            <div style="color:var(--red);font-weight:700;font-size:18px;margin-top:8px;animation:pulse 1s infinite">▶ PASAR A CONSULTORIO #${a.c.num}</div>
+          </div>`).join('')}
+      </div>
+    </div>`:'';
+
+  // Summary table for all others
+  const tableRows=[...atendiendo,...conEspera,...libres];
+  const tableHTML=`
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="border-bottom:2px solid rgba(255,255,255,.1)">
+          <th style="text-align:left;padding:14px 18px;font-size:13px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;font-weight:600">Consultorio</th>
+          <th style="text-align:left;padding:14px 18px;font-size:13px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;font-weight:600">Turno</th>
+          <th style="text-align:left;padding:14px 18px;font-size:13px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;font-weight:600">Paciente</th>
+          <th style="text-align:left;padding:14px 18px;font-size:13px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;font-weight:600">Estado</th>
+          <th style="text-align:center;padding:14px 18px;font-size:13px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;font-weight:600">Espera</th>
+        </tr></thead>
+        <tbody>
+          ${tableRows.map(a=>{
+            const isAct=!!a.enAt;
+            const rowBg=isAct?'rgba(58,123,213,.08)':'transparent';
+            const turnoColor=isAct?'var(--accent)':'rgba(255,255,255,.2)';
+            const statusText=isAct?'En atención':a.esp.length?'En espera':'Libre';
+            const statusColor=isAct?'var(--blue)':a.esp.length?'var(--accent)':'rgba(255,255,255,.2)';
+            return`<tr style="border-bottom:1px solid rgba(255,255,255,.06);background:${rowBg}">
+              <td style="padding:12px 18px;font-size:16px"><strong style="color:var(--accent)">#${a.c.num}</strong> <span style="color:rgba(255,255,255,.5);font-size:14px">${a.c.especialidad}</span></td>
+              <td style="padding:12px 18px;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:${turnoColor}">${a.enAt?a.enAt.codigo:'—'}</td>
+              <td style="padding:12px 18px;font-size:16px;font-weight:${isAct?'500':'400'};color:${isAct?'#fff':'rgba(255,255,255,.3)'}">${a.pac?a.pac.nombre:isAct?'—':'—'}</td>
+              <td style="padding:12px 18px"><span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;background:${statusColor};color:#fff">${statusText}</span></td>
+              <td style="padding:12px 18px;text-align:center;font-size:18px;font-weight:600;color:${a.esp.length?'var(--accent)':'rgba(255,255,255,.15)'}">${a.esp.length}</td>
+            </tr>`;}).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  // No activity message
+  const noActivity=!callingCards.length&&!atendiendo.length&&!conEspera.length?
+    `<div style="text-align:center;padding:60px 0;opacity:.4">
+      <div style="font-size:48px;margin-bottom:12px">🏥</div>
+      <p style="font-size:20px">La jornada aún no ha comenzado</p>
+      <p style="font-size:14px;margin-top:4px">Los turnos aparecerán aquí cuando inicie la atención</p>
+    </div>`:'';
+
+  $('app').innerHTML=`<div class="tv-screen">
+  <div class="tv-header">
+    <div class="tv-brand"><img src="${LOGO}" alt="IASD"><div><h1>${cfg.nombre}</h1><p>${cfg.ubicacion}</p></div></div>
+    <div style="text-align:right"><div class="tv-clock" id="tvClock">${clock}</div><p style="font-size:12px;color:rgba(255,255,255,.3)">${cfg.fecha}</p>
+    <button id="tvSoundBtn" onclick="window._tvAudioEnabled=true;playBell();this.textContent='🔊 Sonido activo';this.style.opacity='.7'" style="margin-top:8px;padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer">🔈 Activar sonido</button></div>
+  </div>
+  ${callingHTML}${noActivity}${tableHTML}
+  </div>`;
+
+  if(window._tvInterval)clearInterval(window._tvInterval);
+  window._tvInterval=setInterval(()=>{
+    const el=document.getElementById('tvClock');
+    if(el)el.textContent=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  },1000);
+  if(window._tvRefresh)clearInterval(window._tvRefresh);
+  window._tvRefresh=setInterval(()=>{if(location.hash==='#tv')renderTV()},5000);
+  const callingNow=T.filter(t=>t.estado==='llamando');
+  if(callingNow.length>0 && window._tvAudioEnabled && Date.now()-(window._tvLastBell||0)>6000){
+    window._tvLastBell=Date.now();
+    playBell();
+  }
+}
+
+// ===== PUBLIC SCHEDULING PAGE =====
+function renderPublicAgendar(){
+  const E=DB.getEsp(),cfg=DB.g('config');
+  $('app').innerHTML=`<div style="min-height:100vh;background:var(--bg)">
+  <div class="public-header"><img src="${LOGO}" alt="IASD"><div><h1>${cfg.nombre}</h1><p>${cfg.ubicacion} · ${cfg.fecha}</p></div></div>
+  <div class="public-body">
+    <div class="card fade-up"><div class="card-title">📅 Agendar Cita Previa</div>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px">Complete sus datos para agendar una cita. Presente el comprobante el día de la jornada.</p>
+    <div class="form-grid">
+      <div class="form-group"><label>Tipo Doc.</label><select id="pTD"><option>CC</option><option>TI</option><option>CE</option><option>Pasaporte</option></select></div>
+      <div class="form-group"><label>Nº Documento *</label><input id="pDoc"></div>
+      <div class="form-group"><label>Nombre completo *</label><input id="pNom"></div>
+      <div class="form-group"><label>Edad</label><input type="number" id="pEdad" min="0" max="120"></div>
+      <div class="form-group"><label>Sexo</label><select id="pSex"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
+      <div class="form-group"><label>Teléfono *</label><input id="pTel"></div>
+      <div class="form-group"><label>Dirección</label><input id="pDir"></div>
+      <div class="form-group"><label>Iglesia procedencia</label><input id="pIg"></div>
+      <div class="form-group"><label>Día / Distrito de jornada</label><select id="pJor">
+        <option value="Lunes - Libertad">Lunes - Libertad</option>
+        <option value="Martes - Atalaya">Martes - Atalaya</option>
+        <option value="Miércoles - Sion">Miércoles - Sion</option>
+        <option value="Viernes - Patios">Viernes - Patios</option>
+      </select></div>
+    </div>
+    <div style="margin-top:16px"><label style="font-size:12px;font-weight:500;color:var(--text-dim);display:block;margin-bottom:6px">Especialidades que necesita:</label>
+    <div class="checkbox-grid" id="pEspG">${Object.entries(E).map(([e,d])=>{const cd=d.cons.reduce((s,c)=>s+DB.cuposDisp(c.id),0);
+    return cd>0?`<label class="checkbox-item"><input type="checkbox" value="${e}" onchange="this.parentElement.classList.toggle('checked',this.checked)"> ${e}<span class="cupos">${cd} disp.</span></label>`:''}).join('')}</div></div>
+    <div class="form-grid" style="margin-top:12px"><div class="form-group"><label>Bloque horario</label><select id="pBlq"><option value="mañana">Mañana (8:30-12:30)</option><option value="tarde">Tarde (2:00-3:30)</option></select></div></div>
+    <div class="btn-group"><button class="btn btn-primary" onclick="pubCita()">📅 Agendar mi cita</button>
+    <a href="#" class="btn btn-secondary" onclick="render()">← Volver al login</a></div>
+    </div>
+    <div id="pubResult"></div>
+  </div></div>`;
+}
+async function pubCita(){
+  const doc=$('pDoc').value.trim(),nom=$('pNom').value.trim();
+  if(!doc||!nom){alert('Complete documento y nombre');return}
+  const espSel=[];document.querySelectorAll('#pEspG input:checked').forEach(cb=>espSel.push(cb.value));
+  if(!espSel.length){alert('Seleccione al menos una especialidad');return}
+  let P=DB.g('pacientes')||[],pac=P.find(p=>p.documento===doc);
+  if(!pac){
+    pac={id:'p_'+Date.now(),tipoDoc:$('pTD').value,documento:doc,nombre:nom.toUpperCase(),edad:+($('pEdad').value)||0,sexo:$('pSex').value,
+      telefono:$('pTel').value.trim(),direccion:$('pDir').value.trim(),estadoCivil:'',miembro:'no',
+      iglesia:$('pIg').value.trim(),fecha:new Date().toISOString(),tipo:'cita_previa'};
+    P.push(pac);
+  }else{
+    pac.tipoDoc=$('pTD').value;
+    pac.nombre=nom.toUpperCase();
+    pac.edad=+($('pEdad').value)||pac.edad||0;
+    pac.sexo=$('pSex').value;
+    pac.telefono=$('pTel').value.trim()||pac.telefono||'';
+    pac.direccion=$('pDir').value.trim()||pac.direccion||'';
+    pac.iglesia=$('pIg').value.trim()||pac.iglesia||'';
+    pac.tipo='cita_previa';
+  }
+  DB.s('pacientes',P);
+  if(window.REMOTE) await REMOTE.syncKey('pacientes',[pac]);
+  if(citaActivaPaciente(pac.id)){alert('Ya existe una cita activa para este documento.');return}
+  const CS=DB.g('consultorios')||[],blq=$('pBlq').value,jor=($('pJor')?$('pJor').value:''),ruta=[];
+  espSel.forEach(esp=>{const cc=CS.filter(c=>c.especialidad===esp);let best=null,bd=-1;
+    cc.forEach(c=>{const d=DB.cuposDisp(c.id);if(d>bd){bd=d;best=c}});if(best&&bd>0)ruta.push(best.id)});
+  if(!ruta.length){alert('No hay cupos disponibles en este momento');return}
+  const cod=DB.nextCi(),CI=DB.g('citas')||[];
+  const nuevaCita={id:'ci_'+Date.now(),codigo:cod,pacienteId:pac.id,consultorioId:ruta[0],especialidad:espSel.join(', '),
+    bloque:blq,hora:jor,ruta:ruta,estado:'pendiente',fecha:new Date().toISOString()};
+  CI.push(nuevaCita);
+  DB.s('citas',CI);
+  if(window.REMOTE) await REMOTE.syncKey('citas',[nuevaCita]);
+  const info=ruta.map(cid=>{const c=CS.find(x=>x.id===cid);return c?c.especialidad+' (Cons. #'+c.num+')':''});
+  $('pubResult').innerHTML=`<div class="card fade-up" style="border-left:4px solid var(--green);margin-top:16px">
+    <div class="card-title" style="color:var(--green)">✅ ¡Cita agendada exitosamente!</div>
+    <p style="font-family:'Playfair Display',serif;font-size:28px;color:var(--accent);margin:12px 0;letter-spacing:3px">${cod}</p>
+    <p><strong>Paciente:</strong> ${pac.nombre}</p>
+    <p><strong>Fecha cita:</strong> ${fechaJornada(jor)}</p>
+    <p><strong>Distrito:</strong> ${jor}</p>
+    <p><strong>Bloque:</strong> ${blq==='mañana'?'Mañana (8:30-12:30)':'Tarde (2:00-3:30)'}</p>
+    <p style="margin-top:8px"><strong>Ruta de atención:</strong></p>
+    <ol style="margin:4px 0 0 20px;font-size:13px">${info.map(r=>'<li>'+r+'</li>').join('')}</ol>
+    <div class="btn-group"><button class="btn btn-primary" onclick="pdfCita('${nuevaCita.id}')">📄 Descargar comprobante PDF</button></div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:12px">Guarde este código y presente el comprobante el día de la jornada.</p>
+  </div>`;
+}
+
+// ===== INIT =====
+window.addEventListener('hashchange',()=>{
+  if(window._tvInterval)clearInterval(window._tvInterval);
+  if(window._tvRefresh)clearInterval(window._tvRefresh);
+  render();
+});
+async function boot(){
+  $('app').innerHTML='<div class="login-page"><div class="login-card fade-up"><img src="'+LOGO+'" alt="IASD"><h1>Jornada de Salud</h1><p class="subtitle">Conectando con Supabase...</p></div></div>';
+  await REMOTE.loadAll();
+  render();
+  setInterval(()=>{
+    const tag=(document.activeElement&&document.activeElement.tagName)||'';
+    const escribiendo=['INPUT','TEXTAREA','SELECT'].includes(tag);
+    const medicoEnConsulta=CU&&CU.rol==='medico'&&(DB.g('turnos')||[]).some(t=>t.consultorioId===CU.consultorio&&t.estado==='en_atencion');
+    const shouldRender = !escribiendo && !medicoEnConsulta && (location.hash==='#tv' || (CU&&CU.rol==='medico') || (CU&&['dashboard','turnos'].includes(CP)));
+    REMOTE.loadAll({rerender:shouldRender});
+  },4000);
+}
+boot();
+</script>
+</body>
+</html>
