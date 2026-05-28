@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jornada de Salud — Triaje Liviano</title>
+<style>
+:root{--bg:#f8f6f1;--card:#fff;--nav:#1a2340;--accent:#e8973e;--green:#2d9f6f;--red:#d94343;--blue:#3a7bd5;--muted:#777;--border:#e6e0d6;--shadow:0 4px 18px rgba(0,0,0,.08)}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#222}.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.side{background:var(--nav);color:#fff;padding:22px}.brand{font-size:20px;font-weight:800;color:var(--accent);line-height:1.1}.brand small{display:block;color:#b7bfd6;font-size:11px;letter-spacing:1px;margin-top:5px}.side .box{margin-top:25px;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.05)}.side label{font-size:12px;color:#c8cedf}.main{padding:28px;max-width:1280px}.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.header h1{margin:0;font-size:28px}.status{font-size:12px;padding:6px 10px;border-radius:999px;background:#eee;color:#555}.status.ok{background:#e4f5ec;color:var(--green)}.status.bad{background:#fde8e8;color:var(--red)}.card{background:var(--card);padding:20px;border-radius:16px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.group{display:flex;flex-direction:column;gap:5px}.group label{font-size:12px;font-weight:700;color:#666}input,select,textarea{border:1px solid var(--border);border-radius:10px;padding:11px 12px;font-size:15px;background:#fbfaf7;font-family:inherit}textarea{min-height:70px;resize:vertical}.btn{border:none;border-radius:10px;padding:11px 16px;font-weight:800;cursor:pointer;font-size:14px}.btn-primary{background:var(--accent);color:#fff}.btn-green{background:var(--green);color:#fff}.btn-blue{background:var(--blue);color:#fff}.btn-red{background:var(--red);color:#fff}.btn-sec{background:#ece7dd;color:#222}.btn:disabled{opacity:.55;cursor:not-allowed}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.result{border:1px solid var(--border);border-radius:12px;padding:14px;margin:10px 0;background:#fff}.result strong{font-size:17px}.badge{display:inline-block;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800}.b-ok{background:#e4f5ec;color:var(--green)}.b-warn{background:#fdf0e0;color:#b46a17}.b-blue{background:#e8f0fd;color:var(--blue)}.muted{color:var(--muted);font-size:13px}.alert{padding:12px;border-radius:12px;margin:12px 0}.alert.warn{background:#fff4df;border:1px solid #f1c27d}.alert.bad{background:#fde8e8;border:1px solid #efaaaa}.hidden{display:none}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:800px){.app{grid-template-columns:1fr}.side{position:static}.main{padding:14px}.header{display:block}.two{grid-template-columns:1fr}}
+@media print{body{background:#fff}.app{display:block}.side,.no-print,.btn,.actions{display:none!important}.main{padding:0}.card{box-shadow:none;border:none}.print-sheet{display:block!important}.screen-only{display:none!important}}
+.print-sheet{display:none}.print-page{font-family:Arial,Helvetica,sans-serif;color:#111;padding:20px}.print-head{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:12px}.print-title{font-size:20px;font-weight:800}.print-section{border:1px solid #ccc;border-radius:8px;padding:10px;margin:10px 0}.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.small{font-size:12px}.consent{font-size:11px;line-height:1.35;background:#f4f4f4;padding:8px;border-radius:6px;margin-top:10px}.mini-table{width:100%;border-collapse:collapse;font-size:13px}.mini-table th,.mini-table td{border-bottom:1px solid var(--border);padding:7px;text-align:left}.mini-table th{background:#f6f1e8}.report-wrap{max-height:360px;overflow:auto;border:1px solid var(--border);border-radius:10px}
+
+/* ===== LOGIN LIVIANO / CONTROL ADMIN-REGISTRO ===== */
+.login-lite{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#1a2340,#26365f);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{width:380px;max-width:100%;background:#fff;border-radius:18px;padding:28px;box-shadow:0 18px 60px rgba(0,0,0,.25)}
+.login-box h1{margin:0 0 6px;color:var(--accent);font-size:24px}.login-box p{margin:0 0 18px;color:#666;font-size:13px}.login-box input{width:100%;margin:6px 0 12px}.login-error{display:none;color:var(--red);font-size:13px;margin-bottom:10px}.top-user{margin-top:16px;padding:10px;border-radius:10px;background:rgba(255,255,255,.08);font-size:13px;color:#fff}.top-user button{margin-top:8px;width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;cursor:pointer}
+body.auth-pending .app{display:none!important}
+body:not(.auth-pending) .login-lite{display:none!important}
+body.registro-user .admin-only{display:none!important}
+body.admin-user .registro-only{}
+
+</style>
+</head>
+<body class="auth-pending">
+
+<div id="loginLite" class="login-lite no-print">
+  <div class="login-box">
+    <h1>Jornada de Salud</h1>
+    <p>Ingresa como administrador o usuario de registro/triaje.</p>
+    <div id="loginLiteErr" class="login-error">Usuario o contraseña incorrectos</div>
+    <label><b>Usuario</b></label>
+    <input id="loginUser" placeholder="admin, registro, registro1..." onkeydown="if(event.key==='Enter')loginLite()">
+    <label><b>Contraseña</b></label>
+    <input id="loginPass" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')loginLite()">
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="loginLite()">Entrar</button>
+    <div class="muted" style="margin-top:12px">Admin: reportes y control. Registro: triaje, cupos e impresión.</div>
+  </div>
+</div>
+
+<div id="app" class="app">
+  <aside class="side no-print">
+    <div class="brand">Jornada de Salud<small>MODO TRIAJE LIVIANO</small></div>
+    <div id="userBox" class="top-user">Usuario: —<button onclick="logoutLite()">Cerrar sesión</button></div>
+    <div class="box">
+      <label>Jornada activa</label>
+      <select id="jornada" style="width:100%;margin-top:6px">
+        <option>Lunes - Libertad</option>
+        <option>Martes - Atalaya</option>
+        <option>Miércoles - Sion</option>
+        <option>Viernes - Patios</option>
+      </select>
+      <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="cargarJornada()">Cargar jornada</button>
+      <div id="sync" class="status" style="margin-top:12px;text-align:center">Sin cargar</div>
+    </div>
+    <div class="box small">
+      <b>Uso recomendado viernes</b><br><br>
+      1. Cargar jornada una vez.<br>
+      2. Buscar paciente/cita.<br>
+      3. Llenar triaje.<br>
+      4. Generar turno e imprimir.<br><br>
+      Sin médicos, sin monitoreo, sin refresco automático.
+    </div>
+  </aside>
+  <main class="main">
+    <div class="screen-only">
+      <div class="header">
+        <div><h1>Triaje + impresión</h1><div class="muted">Versión liviana para jornada: búsqueda, triaje, turno e impresión.</div></div>
+        <span id="count" class="status">0 citas cargadas</span>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div class="group" style="grid-column:1/-1"><label>Buscar por cédula, nombre o código de cita</label><input id="buscar" placeholder="Ej: 1004806687, María, C-001" oninput="buscarLocal()"></div>
+        </div>
+        <div id="resultados"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0">Dar cupo / Paciente nuevo</h2>
+        <div class="muted">Úsalo cuando la persona no tenga cita previa o entra como cupo adicional. Se registra, se hace triaje y se imprime en el mismo puesto.</div>
+        <div class="grid" style="margin-top:12px">
+          <div class="group"><label>Tipo documento</label><select id="nTipo"><option>CC</option><option>TI</option><option>CE</option><option>PAS</option></select></div>
+          <div class="group"><label>Documento *</label><input id="nDoc" placeholder="Cédula/documento"></div>
+          <div class="group"><label>Nombre completo *</label><input id="nNom" placeholder="Nombre y apellidos"></div>
+          <div class="group"><label>Edad</label><input id="nEdad" placeholder="Edad"></div>
+          <div class="group"><label>Sexo</label><select id="nSexo"><option value="">Seleccione</option><option>Femenino</option><option>Masculino</option><option>Otro</option></select></div>
+          <div class="group"><label>Teléfono</label><input id="nTel" placeholder="Teléfono"></div>
+          <div class="group"><label>Dirección</label><input id="nDir" placeholder="Dirección"></div>
+          <div class="group"><label>¿Es miembro de la iglesia?</label><select id="nMiembro"><option value="No">No</option><option value="Sí">Sí</option><option value="Visitante">Visitante</option></select></div>
+          <div class="group"><label>Iglesia / comunidad</label><input id="nIglesia" placeholder="Iglesia o barrio/comunidad"></div>
+          <div class="group"><label>Especialidad / cupo *</label><select id="nEsp"></select></div>
+        </div>
+        <div id="cuposInfo" class="alert warn">Carga la jornada para ver cupos disponibles.</div>
+        <div class="actions">
+          <button class="btn btn-blue" onclick="crearPacienteCupo()">Crear cupo y pasar a triaje</button>
+          <button class="btn btn-sec" onclick="actualizarCuposUI()">Actualizar cupos</button>
+        </div>
+      </div>
+
+      <div class="card admin-only">
+        <h2 style="margin-top:0">Reporte pastoral por jornada</h2>
+        <div class="muted">Lista de citas registradas por jornada con datos del paciente, iglesia y si es miembro o no.</div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="generarReportePastoral()">Ver reporte de jornada cargada</button>
+          <button class="btn btn-green" onclick="exportarReportePastoralCSV()">Exportar Excel/CSV</button>
+        </div>
+        <div id="resumenPastoral" class="alert warn hidden"></div>
+        <div id="tablaPastoral" class="report-wrap hidden"></div>
+      </div>
+
+      <div id="panelTriaje" class="card hidden">
+        <h2 style="margin-top:0">Paciente seleccionado</h2>
+        <div id="pacInfo" class="alert warn"></div>
+        <div class="grid">
+          <div class="group"><label>Presión arterial *</label><input id="presion" placeholder="Ej: 120/80"></div>
+          <div class="group"><label>Peso *</label><input id="peso" placeholder="Ej: 70 kg"></div>
+          <div class="group"><label>Altura *</label><input id="altura" placeholder="Ej: 1.70 m"></div>
+          <div class="group"><label>Temperatura</label><input id="temperatura" placeholder="Ej: 36.5"></div>
+          <div class="group"><label>Frecuencia cardiaca</label><input id="fc" placeholder="Ej: 80 lpm"></div>
+          <div class="group"><label>Saturación O₂</label><input id="sat" placeholder="Ej: 98%"></div>
+          <div class="group"><label>Frecuencia respiratoria</label><input id="fr" placeholder="Ej: 18 rpm"></div>
+          <div class="group"><label>Hipertensión</label><select id="hta"><option value="">No refiere / No sabe</option><option value="si">Sí</option><option value="no">No</option></select></div>
+          <div class="group"><label>Diabetes</label><select id="diabetes"><option value="">No refiere / No sabe</option><option value="si">Sí</option><option value="no">No</option></select></div>
+          <div class="group"><label>Embarazo</label><select id="embarazo"><option value="">No aplica / No refiere</option><option value="si">Sí</option><option value="no">No</option></select></div>
+          <div class="group"><label>Anticoagulantes</label><select id="anticoagulantes"><option value="">No refiere</option><option value="si">Sí</option><option value="no">No</option></select></div>
+          <div class="group"><label>¿Sufre alguna enfermedad?</label><select id="enfermedad"><option>Ninguna</option><option>Hipertensión</option><option>Diabetes</option><option>Asma</option><option>Enfermedad cardíaca</option><option>Enfermedad renal</option><option>VIH/SIDA</option><option>Cáncer</option><option>Epilepsia</option><option>Otra</option><option>No desea informar</option></select></div>
+          <div class="group"><label>Otra enfermedad</label><input id="otraEnf" placeholder="Detalle si aplica"></div>
+          <div class="group"><label>¿Ha tenido alguna cirugía?</label><select id="cirugia"><option>No</option><option>Sí</option><option>No desea informar</option></select></div>
+          <div class="group"><label>Detalle cirugía</label><input id="detalleCirugia" placeholder="Detalle si aplica"></div>
+          <div class="group" style="grid-column:1/-1"><label>Alergias</label><input id="alergias" placeholder="Medicamentos/alimentos u otras alergias"></div>
+          <div class="group" style="grid-column:1/-1"><label>Medicamentos actuales</label><input id="meds" placeholder="Medicamentos que toma actualmente"></div>
+          <div class="group"><label>Dolor actual</label><input id="dolor" placeholder="Ej: dolor dental 8/10"></div>
+          <div class="group"><label>Síntomas de alarma</label><input id="alarma" placeholder="Dolor pecho, mareo, dificultad respiratoria..."></div>
+          <div class="group"><label>Decisión de triaje *</label><select id="decision"><option value="apto">Apto para pasar</option><option value="valoracion">Requiere valoración médica primero</option><option value="no_apto">No apto / no activar turno</option></select></div>
+          <div class="group" style="grid-column:1/-1"><label>Observaciones de triaje</label><textarea id="obs" placeholder="Observaciones, alertas o indicaciones"></textarea></div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-green" onclick="guardarTriajeImprimir()">Guardar triaje, generar turno e imprimir</button>
+          <button class="btn btn-sec" onclick="limpiarSeleccion()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+    <div id="printArea" class="print-sheet"></div>
+  </main>
+</div>
+<script>
+const SUPABASE_URL='https://etvjotjriuueiefdzuvk.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0dmpvdGpyaXV1ZWllZmR6dXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTM3NTAsImV4cCI6MjA5NDYyOTc1MH0.Cr5peeM8Y7y5RYybXdpJlSSWi1Cu6iVeUshb9AqbR74';
+const headers={'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'};
+let PACIENTES=[],CITAS=[],TURNOS=[],CONSULTORIOS=[],SEL=null;
+
+const USERS_LITE=[
+  {u:'admin',p:'admin123',rol:'admin',nombre:'Administrador'},
+  {u:'registro',p:'registro123',rol:'registro',nombre:'Registro Principal'},
+  {u:'registro1',p:'registro123',rol:'registro',nombre:'Registro 1'},
+  {u:'registro2',p:'registro123',rol:'registro',nombre:'Registro 2'},
+  {u:'registro3',p:'registro123',rol:'registro',nombre:'Registro 3'},
+  {u:'registro4',p:'registro123',rol:'registro',nombre:'Registro 4'}
+];
+let USER_LITE=null;
+function aplicarRolLite(){
+  const raw=localStorage.getItem('js_triaje_user_lite');
+  if(raw){try{USER_LITE=JSON.parse(raw)}catch(e){USER_LITE=null}}
+  if(!USER_LITE){document.body.classList.add('auth-pending');return}
+  document.body.classList.remove('auth-pending','admin-user','registro-user');
+  document.body.classList.add(USER_LITE.rol==='admin'?'admin-user':'registro-user');
+  const ub=document.getElementById('userBox');
+  if(ub)ub.innerHTML=`Usuario: <b>${esc(USER_LITE.nombre)}</b><br><span style="color:#c8cedf">${USER_LITE.rol.toUpperCase()}</span><button onclick="logoutLite()">Cerrar sesión</button>`;
+}
+function loginLite(){
+  const u=(document.getElementById('loginUser')||{}).value?.trim();
+  const p=(document.getElementById('loginPass')||{}).value?.trim();
+  const found=USERS_LITE.find(x=>x.u===u&&x.p===p);
+  if(!found){const e=document.getElementById('loginLiteErr'); if(e)e.style.display='block'; return}
+  USER_LITE={usuario:found.u,rol:found.rol,nombre:found.nombre};
+  localStorage.setItem('js_triaje_user_lite',JSON.stringify(USER_LITE));
+  aplicarRolLite();
+}
+function logoutLite(){localStorage.removeItem('js_triaje_user_lite');USER_LITE=null;document.body.classList.add('auth-pending');document.body.classList.remove('admin-user','registro-user');}
+
+const $=id=>document.getElementById(id);
+function setSync(txt,ok){const el=$('sync');el.textContent=txt;el.className='status '+(ok?'ok':'bad')}
+async function api(table,qs='',opts={}){const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}${qs}`,{...opts,headers:{...headers,...(opts.headers||{})}});if(!r.ok){throw new Error(table+' '+r.status+' '+await r.text())}const t=await r.text();return t?JSON.parse(t):null}
+function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function toLocalPaciente(r){return {id:r.id,tipoDoc:r.tipo_doc,documento:r.documento,nombre:r.nombre,edad:r.edad,sexo:r.sexo,telefono:r.telefono,direccion:r.direccion,estadoCivil:r.estado_civil,miembro:r.miembro,iglesia:r.iglesia,presion:r.presion||'',peso:r.peso||'',altura:r.altura||'',temperatura:r.temperatura||'',frecuenciaCardiaca:r.frecuencia_cardiaca||'',saturacion:r.saturacion||'',frecuenciaRespiratoria:r.frecuencia_respiratoria||'',alergias:r.alergias||'',medicamentosActuales:r.medicamentos_actuales||'',diabetes:r.diabetes||'',hipertension:r.hipertension||'',embarazo:r.embarazo||'',anticoagulantes:r.anticoagulantes||'',dolorActual:r.dolor_actual||'',sintomasAlarma:r.sintomas_alarma||'',triajeDecision:r.triaje_decision||'',triajeRiesgo:r.triaje_riesgo||'',triajeObservaciones:r.triaje_observaciones||'',enfermedadCronica:r.enfermedad_cronica||'',otraEnfermedad:r.otra_enfermedad||'',cirugiaPrevia:r.cirugia_previa||'',detalleCirugia:r.detalle_cirugia||'',triajeRealizado:!!r.triaje_realizado,triajeFecha:r.triaje_fecha||''}}
+function pacienteRemote(p){return {tipo_doc:p.tipoDoc||'CC',documento:p.documento,nombre:p.nombre,edad:+p.edad||0,sexo:p.sexo||'',telefono:p.telefono||'',direccion:p.direccion||'',estado_civil:p.estadoCivil||'',miembro:p.miembro||'',iglesia:p.iglesia||'',presion:p.presion||'',peso:p.peso||'',altura:p.altura||'',temperatura:p.temperatura||'',frecuencia_cardiaca:p.frecuenciaCardiaca||'',saturacion:p.saturacion||'',frecuencia_respiratoria:p.frecuenciaRespiratoria||'',alergias:p.alergias||'',medicamentos_actuales:p.medicamentosActuales||'',diabetes:p.diabetes||'',hipertension:p.hipertension||'',embarazo:p.embarazo||'',anticoagulantes:p.anticoagulantes||'',dolor_actual:p.dolorActual||'',sintomas_alarma:p.sintomasAlarma||'',triaje_decision:p.triajeDecision||'',triaje_riesgo:p.triajeRiesgo||'',triaje_observaciones:p.triajeObservaciones||'',enfermedad_cronica:p.enfermedadCronica||'',otra_enfermedad:p.otraEnfermedad||'',cirugia_previa:p.cirugiaPrevia||'',detalle_cirugia:p.detalleCirugia||'',triaje_realizado:!!p.triajeRealizado,triaje_fecha:p.triajeFecha||null}}
+async function cargarJornada(){
+  try{
+    setSync('Cargando...',true);
+    const j=encodeURIComponent($('jornada').value);
+    const [cs,ci,p,t]=await Promise.all([
+      api('consultorios','?select=id,numero,medico,especialidad,cupos_max,cupos_extra,activo&order=numero.asc'),
+      api('citas',`?select=id,codigo,paciente_id,consultorio_id,especialidad,bloque,jornada,hora,ruta,estado,turno_activado,created_at&jornada=eq.${j}&order=created_at.asc`),
+      api('pacientes','?select=id,tipo_doc,documento,nombre,edad,sexo,telefono,direccion,estado_civil,miembro,iglesia,presion,peso,altura,temperatura,frecuencia_cardiaca,saturacion,frecuencia_respiratoria,alergias,medicamentos_actuales,diabetes,hipertension,embarazo,anticoagulantes,dolor_actual,sintomas_alarma,triaje_decision,triaje_riesgo,triaje_observaciones,enfermedad_cronica,otra_enfermedad,cirugia_previa,detalle_cirugia,triaje_realizado,triaje_fecha'),
+      api('turnos',`?select=id,codigo,paciente_id,consultorio_id,cita_id,estado,bloque,jornada,ruta,ruta_index,llamado_en,created_at&jornada=eq.${j}`)
+    ]);
+    CONSULTORIOS=(cs||[]).map(c=>({id:c.id,num:c.numero,medico:c.medico,especialidad:c.especialidad,activo:c.activo!==false}));
+    CITAS=(ci||[]).map(c=>({id:c.id,codigo:c.codigo,pacienteId:c.paciente_id,consultorioId:c.consultorio_id,especialidad:c.especialidad,bloque:c.bloque,jornada:c.jornada,hora:c.hora,ruta:c.ruta||[],estado:c.estado,turnoActivado:!!c.turno_activado,fecha:c.created_at}));
+    PACIENTES=(p||[]).map(toLocalPaciente);
+    TURNOS=(t||[]).map(x=>({id:x.id,codigo:x.codigo,pacienteId:x.paciente_id,consultorioId:x.consultorio_id,citaId:x.cita_id,estado:x.estado,bloque:x.bloque,jornada:x.jornada,ruta:x.ruta||[],rutaIndex:x.ruta_index||0,llamadoEn:x.llamado_en,fecha:x.created_at}));
+    $('count').textContent=CITAS.length+' citas cargadas';
+    setSync('Nube conectada',true);
+    poblarEspecialidadesCupo();
+    actualizarCuposUI();
+    buscarLocal();
+  }catch(e){console.error(e);setSync('Error de conexión',false);alert('No se pudo cargar la jornada. Revisa internet/Supabase.\n\n'+e.message)}
+}
+function buscarLocal(){
+  const q=norm($('buscar').value); const r=$('resultados');
+  if(!q){r.innerHTML='<div class="muted">Carga la jornada y busca por cédula, nombre o código.</div>';return}
+  const items=[];
+  CITAS.forEach(c=>{const p=PACIENTES.find(x=>x.id===c.pacienteId); if(!p)return; const hay=[c.codigo,p.documento,p.nombre,p.telefono].some(v=>norm(v).includes(q)); if(hay)items.push({p,c,t:TURNOS.find(t=>t.citaId===c.id)});});
+  PACIENTES.forEach(p=>{if(items.some(i=>i.p.id===p.id))return; if([p.documento,p.nombre,p.telefono].some(v=>norm(v).includes(q)))items.push({p,c:null,t:TURNOS.find(t=>t.pacienteId===p.id)});});
+  r.innerHTML=items.slice(0,20).map((it,i)=>`<div class="result"><strong>${esc(it.p.nombre)}</strong> <span class="muted">${esc(it.p.documento)}</span><br>
+  ${it.c?`<span class="badge b-blue">${esc(it.c.codigo)}</span> ${esc(it.c.especialidad)} · ${esc(it.c.jornada)} · ${esc(it.c.hora||'Sin hora')}`:'<span class="badge b-warn">Sin cita cargada en esta jornada</span>'}
+  ${it.t?` <span class="badge b-ok">Turno: ${esc(it.t.codigo)} · ${esc(it.t.estado)}</span>`:''}
+  ${it.p.triajeRealizado?` <span class="badge b-ok">Triaje registrado</span>`:''}
+  <div class="actions"><button class="btn btn-primary" onclick="seleccionar(${i})">Seleccionar</button></div></div>`).join('') || '<div class="alert bad">No se encontró paciente/cita en los datos cargados.</div>';
+  window.__items=items;
+}
+function seleccionar(i){SEL=window.__items[i]; const p=SEL.p,c=SEL.c,t=SEL.t; $('panelTriaje').classList.remove('hidden'); $('pacInfo').innerHTML=`<b>${esc(p.nombre)}</b> · Doc: ${esc(p.documento)} · Edad: ${esc(p.edad)} · Sexo: ${esc(p.sexo)}<br>${c?`Cita: <b>${esc(c.codigo)}</b> · ${esc(c.especialidad)} · ${esc(c.hora||'—')} · Ruta: ${rutaTxt(c.ruta)}`:'Paciente sin cita de esta jornada'} ${SEL.especialidadExtra?`<br><b>Cupo nuevo:</b> ${esc(SEL.especialidadExtra)}`:''} ${t?`<br>Turno actual: <b>${esc(t.codigo)}</b> · ${esc(t.estado)}`:''}`;
+  const map=[['presion','presion'],['peso','peso'],['altura','altura'],['temperatura','temperatura'],['fc','frecuenciaCardiaca'],['sat','saturacion'],['fr','frecuenciaRespiratoria'],['hta','hipertension'],['diabetes','diabetes'],['embarazo','embarazo'],['anticoagulantes','anticoagulantes'],['enfermedad','enfermedadCronica'],['otraEnf','otraEnfermedad'],['cirugia','cirugiaPrevia'],['detalleCirugia','detalleCirugia'],['alergias','alergias'],['meds','medicamentosActuales'],['dolor','dolorActual'],['alarma','sintomasAlarma'],['decision','triajeDecision'],['obs','triajeObservaciones']];
+  map.forEach(([id,k])=>{if($(id))$(id).value=p[k]||($(id).tagName==='SELECT'?$(id).options[0].value:'')});
+  $('panelTriaje').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function rutaTxt(r){return (r||[]).map(id=>{const c=CONSULTORIOS.find(x=>x.id===id);return c?('#'+c.num+' '+c.especialidad):id}).join(' → ')||'—'}
+function alertaTriaje(p){const a=[];const pr=String(p.presion||'').match(/(\d{2,3})\s*\/\s*(\d{2,3})/);if(pr){const s=+pr[1],d=+pr[2];if(s>=180||d>=110)a.push('Presión arterial muy elevada');else if(s>=160||d>=100)a.push('Presión arterial elevada');} const temp=parseFloat(String(p.temperatura||'').replace(',','.')); if(temp>=38)a.push('Temperatura elevada'); const sat=parseInt(String(p.saturacion||'').replace(/\D/g,'')); if(sat&&sat<92)a.push('Saturación baja'); if(p.sintomasAlarma)a.push('Síntomas de alarma: '+p.sintomasAlarma); if(p.alergias)a.push('Alergias: '+p.alergias); if(p.anticoagulantes==='si')a.push('Usa anticoagulantes'); return a.join(' | ')}
+function nextCodigo(){return 'T-'+Date.now().toString().slice(-5)+'-'+Math.floor(Math.random()*9000+1000)}
+async function guardarTriajeImprimir(){
+  if(!SEL){alert('Seleccione un paciente.');return}
+  if(!$('presion').value.trim()||!$('peso').value.trim()||!$('altura').value.trim()){alert('Complete presión, peso y altura.');return}
+  const p=SEL.p,c=SEL.c; Object.assign(p,{presion:$('presion').value.trim(),peso:$('peso').value.trim(),altura:$('altura').value.trim(),temperatura:$('temperatura').value.trim(),frecuenciaCardiaca:$('fc').value.trim(),saturacion:$('sat').value.trim(),frecuenciaRespiratoria:$('fr').value.trim(),hipertension:$('hta').value,diabetes:$('diabetes').value,embarazo:$('embarazo').value,anticoagulantes:$('anticoagulantes').value,enfermedadCronica:$('enfermedad').value,otraEnfermedad:$('otraEnf').value.trim(),cirugiaPrevia:$('cirugia').value,detalleCirugia:$('detalleCirugia').value.trim(),alergias:$('alergias').value.trim(),medicamentosActuales:$('meds').value.trim(),dolorActual:$('dolor').value.trim(),sintomasAlarma:$('alarma').value.trim(),triajeDecision:$('decision').value,triajeObservaciones:$('obs').value.trim(),triajeRealizado:true,triajeFecha:new Date().toISOString()});
+  p.triajeRiesgo=alertaTriaje(p);
+  try{
+    await api('pacientes',`?id=eq.${encodeURIComponent(p.id)}`,{method:'PATCH',body:JSON.stringify(pacienteRemote(p)),headers:{'Prefer':'return=minimal'}});
+    let turno=SEL.t;
+    const consIdParaTurno = c ? (c.ruta&&c.ruta.length?c.ruta[0]:c.consultorioId) : (SEL.consultorioId||null);
+    if(!turno && p.triajeDecision!=='no_apto' && consIdParaTurno){
+      turno={id:'t_'+Date.now(),codigo:nextCodigo(),pacienteId:p.id,consultorioId:consIdParaTurno,citaId:c?c.id:null,estado:'esperando',bloque:c?(c.bloque||''):'cupo',jornada:c?(c.jornada||$('jornada').value):$('jornada').value,ruta:c&&(c.ruta&&c.ruta.length)?c.ruta:[consIdParaTurno],rutaIndex:0,llamadoEn:null,fecha:new Date().toISOString()};
+      await api('turnos','',{method:'POST',body:JSON.stringify({id:turno.id,codigo:turno.codigo,paciente_id:turno.pacienteId,consultorio_id:turno.consultorioId,cita_id:turno.citaId,estado:turno.estado,bloque:turno.bloque,jornada:turno.jornada,ruta:turno.ruta,ruta_index:turno.rutaIndex,llamado_en:null}),headers:{'Prefer':'return=minimal'}});
+      if(c){await api('citas',`?id=eq.${encodeURIComponent(c.id)}`,{method:'PATCH',body:JSON.stringify({estado:'activada',turno_activado:true}),headers:{'Prefer':'return=minimal'}}); c.estado='activada'; c.turnoActivado=true;}
+      TURNOS.push(turno); SEL.t=turno;
+    } else if(c && turno && p.triajeDecision!=='no_apto'){
+      await api('turnos',`?id=eq.${encodeURIComponent(turno.id)}`,{method:'PATCH',body:JSON.stringify({estado:'esperando'}),headers:{'Prefer':'return=minimal'}});
+      turno.estado='esperando';
+    }
+    setSync('Guardado en nube',true);
+    imprimirHoja(p,c,SEL.t);
+    buscarLocal();
+  }catch(e){console.error(e);setSync('Error al guardar',false);alert('No se pudo guardar en Supabase. No se debe mostrar como activado.\n\n'+e.message)}
+}
+function imprimirHoja(p,c,t){const alertas=p.triajeRiesgo||alertaTriaje(p); const html=`<div class="print-page"><div class="print-head"><div><div class="print-title">Hoja de triaje — Jornada de Salud</div><div class="small">Iglesia Adventista del Séptimo Día</div></div><div class="small"><b>Fecha:</b> ${new Date().toLocaleString()}<br><b>Turno:</b> ${t?esc(t.codigo):'—'}</div></div>
+<div class="print-section"><b>Datos del paciente</b><div class="print-grid small"><div><b>Nombre:</b> ${esc(p.nombre)}</div><div><b>Documento:</b> ${esc(p.documento)}</div><div><b>Edad:</b> ${esc(p.edad)}</div><div><b>Sexo:</b> ${esc(p.sexo)}</div><div><b>Tel:</b> ${esc(p.telefono)}</div><div><b>Dirección:</b> ${esc(p.direccion)}</div><div><b>Iglesia:</b> ${esc(p.iglesia)}</div><div><b>Miembro:</b> ${esc(p.miembro)}</div></div></div>
+<div class="print-section"><b>Cita / ruta</b><div class="small"><b>Código cita:</b> ${c?esc(c.codigo):'—'}<br><b>Jornada:</b> ${c?esc(c.jornada):esc($('jornada').value)} · <b>Hora:</b> ${c?esc(c.hora||'—'):'—'}<br><b>Especialidad inicial:</b> ${c?esc(c.especialidad):'—'}<br><b>Ruta:</b> ${c?rutaTxt(c.ruta):'—'}</div></div>
+<div class="print-section"><b>Triaje</b><div class="print-grid small"><div><b>Presión:</b> ${esc(p.presion)}</div><div><b>Peso:</b> ${esc(p.peso)}</div><div><b>Altura:</b> ${esc(p.altura)}</div><div><b>Temp:</b> ${esc(p.temperatura)}</div><div><b>FC:</b> ${esc(p.frecuenciaCardiaca)}</div><div><b>Sat O₂:</b> ${esc(p.saturacion)}</div><div><b>FR:</b> ${esc(p.frecuenciaRespiratoria)}</div><div><b>Decisión:</b> ${esc(p.triajeDecision)}</div></div><div class="small"><b>Antecedentes:</b> HTA ${esc(p.hipertension||'—')} · Diabetes ${esc(p.diabetes||'—')} · Embarazo ${esc(p.embarazo||'—')} · Anticoagulantes ${esc(p.anticoagulantes||'—')}<br><b>Enfermedad:</b> ${esc(p.enfermedadCronica||'—')} ${p.otraEnfermedad?'· '+esc(p.otraEnfermedad):''}<br><b>Cirugía:</b> ${esc(p.cirugiaPrevia||'—')} ${p.detalleCirugia?'· '+esc(p.detalleCirugia):''}<br><b>Alergias:</b> ${esc(p.alergias||'—')}<br><b>Medicamentos actuales:</b> ${esc(p.medicamentosActuales||'—')}<br><b>Dolor/Síntomas:</b> ${esc(p.dolorActual||'—')} ${p.sintomasAlarma?'· '+esc(p.sintomasAlarma):''}<br><b>Alertas:</b> ${esc(alertas||'Sin alertas registradas')}<br><b>Observaciones:</b> ${esc(p.triajeObservaciones||'—')}</div></div>
+<div class="consent">La presente atención fue realizada en el marco de una jornada de apoyo y orientación en salud de carácter básico y preventivo, con fines sociales y comunitarios. Esta hoja registra datos de triaje y orientación básica. En caso de signos de alarma, seguimiento adicional o atención especializada, se recomienda acudir a su entidad de salud correspondiente.</div></div>`; $('printArea').innerHTML=html; setTimeout(()=>window.print(),250)}
+
+function especialidadDeConsultorio(id){const c=CONSULTORIOS.find(x=>x.id===id);return c?c.especialidad:''}
+function poblarEspecialidadesCupo(){
+  const sel=$('nEsp'); if(!sel)return;
+  const esp=[...new Set(CONSULTORIOS.filter(c=>c.activo!==false && c.especialidad!=='Triaje').map(c=>c.especialidad))].sort();
+  sel.innerHTML=esp.map(e=>`<option value="${esc(e)}">${esc(e)}</option>`).join('');
+}
+function usadosConsultorio(cid){
+  const j=$('jornada').value;
+  return TURNOS.filter(t=>t.consultorioId===cid && t.jornada===j && !['cancelado','cerrado_jornada','finalizado'].includes(t.estado)).length +
+         CITAS.filter(c=>c.consultorioId===cid && c.jornada===j && c.estado!=='cancelado' && !c.turnoActivado).length;
+}
+function cuposDisponiblesConsultorio(c){return Math.max(0,(Number(c.cuposMax||0)+Number(c.cuposExtra||0))-usadosConsultorio(c.id));}
+function consultorioParaCupo(esp){
+  const candidatos=CONSULTORIOS.filter(c=>c.especialidad===esp && c.activo!==false);
+  return candidatos.map(c=>({c,disp:cuposDisponiblesConsultorio(c),usados:usadosConsultorio(c.id)}))
+    .filter(x=>x.disp>0)
+    .sort((a,b)=>a.usados-b.usados || b.disp-a.disp || Number(a.c.num||0)-Number(b.c.num||0))[0]?.c || candidatos[0] || null;
+}
+function actualizarCuposUI(){
+  const box=$('cuposInfo'); if(!box)return;
+  const esp=$('nEsp')?$('nEsp').value:'';
+  const grupos=(esp?[esp]:[...new Set(CONSULTORIOS.filter(c=>c.especialidad!=='Triaje').map(c=>c.especialidad))]);
+  box.innerHTML=grupos.map(e=>{
+    const cs=CONSULTORIOS.filter(c=>c.especialidad===e && c.activo!==false);
+    const total=cs.reduce((s,c)=>s+cuposDisponiblesConsultorio(c),0);
+    return `<b>${esc(e)}</b>: ${total} cupos disponibles`;
+  }).join('<br>') || 'Sin consultorios cargados.';
+}
+if(document.addEventListener){document.addEventListener('change',e=>{if(e.target&&e.target.id==='nEsp')actualizarCuposUI();});}
+async function crearPacienteCupo(){
+  if(!CONSULTORIOS.length){alert('Primero carga la jornada.');return}
+  const doc=$('nDoc').value.trim(), nom=$('nNom').value.trim(), esp=$('nEsp').value;
+  if(!doc||!nom||!esp){alert('Documento, nombre y especialidad son obligatorios.');return}
+  let p=PACIENTES.find(x=>String(x.documento||'').trim()===doc);
+  const cons=consultorioParaCupo(esp);
+  if(!cons){alert('No hay consultorio disponible para '+esp);return}
+  try{
+    if(!p){
+      p={id:'p_'+Date.now(),tipoDoc:$('nTipo').value,documento:doc,nombre:nom,edad:$('nEdad').value.trim(),sexo:$('nSexo').value,telefono:$('nTel').value.trim(),direccion:$('nDir').value.trim(),miembro:$('nMiembro').value,iglesia:$('nIglesia').value.trim(),estadoCivil:'',presion:'',peso:'',altura:'',temperatura:'',frecuenciaCardiaca:'',saturacion:'',frecuenciaRespiratoria:'',alergias:'',medicamentosActuales:'',diabetes:'',hipertension:'',embarazo:'',anticoagulantes:'',dolorActual:'',sintomasAlarma:'',triajeDecision:'',triajeRiesgo:'',triajeObservaciones:'',enfermedadCronica:'',otraEnfermedad:'',cirugiaPrevia:'',detalleCirugia:'',triajeRealizado:false,triajeFecha:''};
+      await api('pacientes','',{method:'POST',body:JSON.stringify({id:p.id,...pacienteRemote(p)}),headers:{'Prefer':'return=minimal'}});
+      PACIENTES.push(p);
+    }
+    SEL={p,c:null,t:null,consultorioId:cons.id,especialidadExtra:esp};
+    $('buscar').value=doc;
+    seleccionarDesdeSEL();
+    setSync('Cupo listo para triaje',true);
+  }catch(e){console.error(e);setSync('Error creando cupo',false);alert('No se pudo crear el cupo/paciente.\n\n'+e.message)}
+}
+function seleccionarDesdeSEL(){
+  const p=SEL.p,c=SEL.c,t=SEL.t; $('panelTriaje').classList.remove('hidden');
+  $('pacInfo').innerHTML=`<b>${esc(p.nombre)}</b> · Doc: ${esc(p.documento)} · Edad: ${esc(p.edad)} · Sexo: ${esc(p.sexo)}<br>${c?`Cita: <b>${esc(c.codigo)}</b> · ${esc(c.especialidad)} · ${esc(c.hora||'—')} · Ruta: ${rutaTxt(c.ruta)}`:`<b>Cupo nuevo:</b> ${esc(SEL.especialidadExtra||especialidadDeConsultorio(SEL.consultorioId))} · Consultorio #${esc((CONSULTORIOS.find(x=>x.id===SEL.consultorioId)||{}).num||'—')}`} ${t?`<br>Turno actual: <b>${esc(t.codigo)}</b> · ${esc(t.estado)}`:''}`;
+  const map=[['presion','presion'],['peso','peso'],['altura','altura'],['temperatura','temperatura'],['fc','frecuenciaCardiaca'],['sat','saturacion'],['fr','frecuenciaRespiratoria'],['hta','hipertension'],['diabetes','diabetes'],['embarazo','embarazo'],['anticoagulantes','anticoagulantes'],['enfermedad','enfermedadCronica'],['otraEnf','otraEnfermedad'],['cirugia','cirugiaPrevia'],['detalleCirugia','detalleCirugia'],['alergias','alergias'],['meds','medicamentosActuales'],['dolor','dolorActual'],['alarma','sintomasAlarma'],['decision','triajeDecision'],['obs','triajeObservaciones']];
+  map.forEach(([id,k])=>{if($(id))$(id).value=p[k]||($(id).tagName==='SELECT'?$(id).options[0].value:'')});
+  $('panelTriaje').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function filasPastorales(){
+  const byDoc=new Map();
+  CITAS.forEach(c=>{
+    const p=PACIENTES.find(x=>x.id===c.pacienteId); if(!p)return;
+    const key=p.documento||p.id;
+    const actual=byDoc.get(key)||{documento:p.documento,nombre:p.nombre,telefono:p.telefono,iglesia:p.iglesia,miembro:p.miembro||'No',jornada:c.jornada,especialidades:new Set(),codigos:[],estado:[],triaje:p.triajeRealizado?'Sí':'No'};
+    if(c.especialidad)actual.especialidades.add(c.especialidad);
+    if(c.codigo)actual.codigos.push(c.codigo);
+    if(c.estado)actual.estado.push(c.estado);
+    byDoc.set(key,actual);
+  });
+  return [...byDoc.values()].map(x=>({...x,especialidades:[...x.especialidades].join(' / '),codigos:x.codigos.join(' / '),estado:[...new Set(x.estado)].join(' / ')}));
+}
+function generarReportePastoral(){
+  const rows=filasPastorales();
+  const miembros=rows.filter(r=>norm(r.miembro).includes('si')||norm(r.miembro).includes('sí')).length;
+  const externos=rows.length-miembros;
+  $('resumenPastoral').classList.remove('hidden');
+  $('resumenPastoral').innerHTML=`<b>Jornada:</b> ${esc($('jornada').value)} · <b>Personas con cita:</b> ${rows.length} · <b>Miembros:</b> ${miembros} · <b>No miembros/visitantes:</b> ${externos}`;
+  $('tablaPastoral').classList.remove('hidden');
+  $('tablaPastoral').innerHTML=`<table class="mini-table"><thead><tr><th>Documento</th><th>Nombre</th><th>Teléfono</th><th>Iglesia</th><th>Miembro</th><th>Especialidades</th><th>Códigos cita</th><th>Estado</th><th>Triaje</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.documento)}</td><td>${esc(r.nombre)}</td><td>${esc(r.telefono)}</td><td>${esc(r.iglesia)}</td><td>${esc(r.miembro)}</td><td>${esc(r.especialidades)}</td><td>${esc(r.codigos)}</td><td>${esc(r.estado)}</td><td>${esc(r.triaje)}</td></tr>`).join('')}</tbody></table>`;
+}
+function exportarReportePastoralCSV(){
+  const rows=filasPastorales(); if(!rows.length){alert('Primero carga la jornada o genera el reporte.');return}
+  const headers=['Documento','Nombre','Telefono','Iglesia','Miembro','Jornada','Especialidades','Codigos cita','Estado','Triaje'];
+  const csv=[headers.join(';')].concat(rows.map(r=>[r.documento,r.nombre,r.telefono,r.iglesia,r.miembro,r.jornada,r.especialidades,r.codigos,r.estado,r.triaje].map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(';'))).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='reporte-pastoral-'+$('jornada').value.replace(/\s+/g,'-')+'.csv'; a.click(); URL.revokeObjectURL(a.href);
+}
+
+function limpiarSeleccion(){SEL=null;$('panelTriaje').classList.add('hidden')}
+aplicarRolLite();
+</script>
+</body>
+</html>
